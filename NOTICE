@@ -13,9 +13,6 @@ Upstream sources (MIT licensed):
     Skills used:
       brainstorming
       executing-plans
-      finishing-a-development-branch
-      receiving-code-review
-      requesting-code-review
       subagent-driven-development
       using-superpowers (renamed to using-skills in this fork)
       verification-before-completion
@@ -32,7 +29,6 @@ Upstream sources (MIT licensed):
       documentation-and-adrs
       frontend-ui-engineering
       performance-optimization
-      shipping-and-launch
       spec-driven-development
       test-driven-development
 
@@ -55,6 +51,9 @@ Skills explicitly excluded from upstream sets:
     using-git-worktrees             (worktree workflow disabled in personal rules)
     write-plan / execute-plan / brainstorm  (deprecated command shims)
     dispatching-parallel-agents     (replaced by team mode + direct Agent dispatch)
+    finishing-a-development-branch  (rarely fired; trimmed for budget)
+    receiving-code-review           (rarely fired; trimmed for budget)
+    requesting-code-review          (rarely fired; trimmed for budget)
 
   agent-skills
     api-and-interface-design        (covered by personal rules/api-design.md)
@@ -66,6 +65,7 @@ Skills explicitly excluded from upstream sets:
     context-engineering             (rarely fired; trimmed for budget)
     deprecation-and-migration       (rarely fired; trimmed for budget)
     source-driven-development       (rarely fired; trimmed for budget)
+    shipping-and-launch             (rarely fired; trimmed for budget)
 
 Commands and agents:
 
@@ -76,9 +76,8 @@ Commands and agents:
   from both upstream sources, with all internal skill references
   rewritten to the mzyx-skills: namespace.
 
-  Two new commands are original to this repository:
+  One new command is original to this repository:
     /brainstorm  — wraps brainstorming as a verb in the pipeline
-    /wrap        — wraps finishing-a-development-branch as a verb
 
   Waza skills are imported without command stubs to avoid listing
   duplicates (a stub named the same as a skill would surface twice).

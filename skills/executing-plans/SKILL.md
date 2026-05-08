@@ -31,10 +31,7 @@ For each task:
 
 ### Step 3: Complete Development
 
-After all tasks complete and verified:
-- Announce: "I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use mzyx-skills:finishing-a-development-branch
-- Follow that skill to verify tests, present options, execute choice
+After all tasks complete and verified, run the project's test suite, then commit and either merge to the base branch, push and open a PR, or hand the branch back to the user — whichever matches the agreed workflow.
 
 ## When to Stop and Ask for Help
 
@@ -66,4 +63,3 @@ After all tasks complete and verified:
 
 **Required workflow skills:**
 - **mzyx-skills:writing-plans** - Creates the plan this skill executes
-- **mzyx-skills:finishing-a-development-branch** - Complete development after all tasks

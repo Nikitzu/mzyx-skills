@@ -2,8 +2,6 @@
 description: Run the pre-launch checklist via parallel fan-out to specialist personas, then synthesize a go/no-go decision
 ---
 
-Invoke the `mzyx-skills:shipping-and-launch` skill for the launch checklist content. Combine with the fan-out below.
-
 `/ship` is a **fan-out orchestrator**. It runs three specialist personas in parallel against the current change, then merges their reports into a single go/no-go decision with a rollback plan. The personas operate independently — no shared state, no ordering — which is what makes parallel execution safe and useful here.
 
 ## Phase A — Parallel fan-out
@@ -75,5 +73,3 @@ Produce a single output:
 4. If any persona returns a Critical finding, the default verdict is NO-GO unless the user explicitly accepts the risk.
 5. **Skip the fan-out only if all of the following are true:** the change touches 2 files or fewer, the diff is under 50 lines, and it does not touch auth, payments, data access, or config/env. Otherwise, default to fan-out. For solo-pass review on small changes, use `mzyx-skills:check` instead. `/ship` is designed for production-bound changes — when the blast radius is non-trivial, run the parallel review even if the diff looks small.
 6. **Verification gate is non-negotiable.** Phase C must run before any GO verdict. A green diff in CI is not sufficient — confirm locally on the actual branch.
-
-Next step in the flow: `/wrap`.

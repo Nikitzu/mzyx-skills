@@ -29,8 +29,8 @@ Three-layer model:
 The pipeline. Each command invokes one or more skills. Commands ship in `.claude/commands/`; specialist agents in `agents/`.
 
 ```
-/brainstorm  →  /spec  →  /plan  →  /build  →  /review  →  /ship  →  /wrap
-   (sp)         (as+sp)   (sp)     (asks!)    (as+sp)    (3 agents+as+sp)  (sp)
+/brainstorm  →  /spec  →  /plan  →  /build  →  /review  →  /ship
+   (sp)         (as+sp)   (sp)     (asks!)    (as)       (3 agents+sp)
 ```
 
 | Command | Skills / agents invoked | Source |
@@ -41,9 +41,8 @@ The pipeline. Each command invokes one or more skills. Commands ship in `.claude
 | `/build` | **Asks the user which mode first**: parallel teammates / separate session / inline solo. Each mode pairs `mzyx-skills:test-driven-development` + `mzyx-skills:verification-before-completion` per task; the parallel mode layers `mzyx-skills:using-teams` on top. | sp + as |
 | `/test` | `mzyx-skills:test-driven-development` | as |
 | `/code-simplify` | `mzyx-skills:code-simplification` | as |
-| `/review` | `mzyx-skills:code-review-and-quality` → `mzyx-skills:requesting-code-review` | as + sp |
-| `/ship` | Parallel fan-out: `code-reviewer` + `security-auditor` + `test-engineer` agents → `mzyx-skills:shipping-and-launch` → `mzyx-skills:verification-before-completion` → GO / NO-GO + rollback | 3 agents + as + sp |
-| `/wrap` | `mzyx-skills:finishing-a-development-branch` | sp |
+| `/review` | `mzyx-skills:code-review-and-quality` | as |
+| `/ship` | Parallel fan-out: `code-reviewer` + `security-auditor` + `test-engineer` agents → `mzyx-skills:verification-before-completion` → GO / NO-GO + rollback | 3 agents + sp |
 
 (`sp` = superpowers, `as` = agent-skills.)
 
@@ -78,11 +77,7 @@ Skills also auto-trigger on natural language as in the original repos — e.g. s
 | Refactor / clean up            | `code-simplification`                       | agent-skills  |
 | Pre-claim done                 | `verification-before-completion`            | superpowers   |
 | Self-review                    | `code-review-and-quality`                   | agent-skills  |
-| Request review                 | `requesting-code-review`                    | superpowers   |
-| Receive feedback               | `receiving-code-review`                     | superpowers   |
 | Perf concern                   | `performance-optimization`                  | agent-skills  |
-| Pre-merge / pre-launch         | `shipping-and-launch`                       | agent-skills  |
-| Wrap branch                    | `finishing-a-development-branch`            | superpowers   |
 | Record decision                | `documentation-and-adrs`                    | agent-skills  |
 | Write / edit a skill           | `writing-skills`                            | superpowers   |
 | Plan / pressure-test design    | `think`                                     | waza          |
@@ -107,7 +102,7 @@ This is the right install path. All skill cross-references in this repo use the 
 
 After install, skills appear as `mzyx-skills:brainstorming`, `mzyx-skills:test-driven-development`, etc. in the listing, and these slash commands become available:
 
-- Pipeline commands (sp/as): `/brainstorm` `/spec` `/plan` `/build` `/test` `/code-simplify` `/review` `/ship` `/wrap`
+- Pipeline commands (sp/as): `/brainstorm` `/spec` `/plan` `/build` `/test` `/code-simplify` `/review` `/ship`
 - Discipline skills (wz): `mzyx-skills:think` · `design` · `check` · `hunt` · `write` · `learn` · `read` · `health` (no command stubs — invoke namespaced or rely on auto-trigger)
 
 ### Alternative — symlink into `~/.claude/skills/`
