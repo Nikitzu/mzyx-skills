@@ -197,4 +197,4 @@ git worktree remove <worktree-path>
 - **executing-plans** (Step 5) - After all batches complete
 
 **Pairs with:**
-- **using-git-worktrees** - Cleans up worktree created by that skill
+- (worktree workflow disabled in mzyx-skills — direct branch flow only)

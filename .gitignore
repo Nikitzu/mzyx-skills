@@ -3,3 +3,8 @@
 *.bak
 .vscode/
 .idea/
+
+# This repo IS a Claude Code plugin — track .claude/ contents
+# (overrides global gitignore that excludes .claude/)
+!.claude/
+!.claude/**

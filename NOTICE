@@ -1,4 +1,4 @@
-claude-skills
+mzyx-skills
 
 This plugin is a curated mix of upstream skills, trimmed and reorganised
 for personal engineering use. All skill bodies retain their original
@@ -18,7 +18,7 @@ Upstream sources (MIT licensed):
       receiving-code-review
       requesting-code-review
       subagent-driven-development
-      using-superpowers
+      using-superpowers (renamed to using-skills in this fork)
       verification-before-completion
       writing-plans
       writing-skills
@@ -53,4 +53,28 @@ Skills explicitly excluded from upstream sets:
     git-workflow-and-versioning  (covered by personal rules/principles.md)
     security-and-hardening  (covered by personal rules/security-boundaries.md)
     using-agent-skills  (meta-skill / discovery banner not needed)
-    All seven alias commands (ship/plan/build/test/review/spec/code-simplify)
+
+Commands and agents:
+
+  All seven slash commands (/spec, /plan, /build, /test, /code-simplify,
+  /review, /ship) and the three specialist agents (code-reviewer,
+  security-auditor, test-engineer) originate from agent-skills. Several
+  command files have been edited to invoke a mixed set of skills drawn
+  from both upstream sources, with all internal skill references
+  rewritten to the mzyx-skills: namespace.
+
+  Two new commands are original to this repository:
+    /brainstorm  — wraps brainstorming as a verb in the pipeline
+    /wrap        — wraps finishing-a-development-branch as a verb
+
+Skill body edits:
+
+  Several skill bodies originally contained internal cross-references
+  prefixed with the upstream plugin names. All such prefixes have been
+  rewritten to the mzyx-skills namespace so the skills resolve correctly
+  under this plugin. Where references pointed to skills excluded from
+  this set (the worktree skill), the reference was removed; where they
+  pointed to skills that exist under a different name (the upstream
+  systematic-debugging reference now targets debugging-and-error-recovery,
+  and the upstream TDD reference now targets test-driven-development),
+  the reference was retargeted to the retained skill.
