@@ -38,8 +38,8 @@ The pipeline. Each command invokes one or more skills. Commands ship in `.claude
 | `/brainstorm` | `mzyx-skills:brainstorming` | sp |
 | `/spec` | `mzyx-skills:brainstorming` (if fuzzy) → `mzyx-skills:spec-driven-development` | sp + as |
 | `/plan` | `mzyx-skills:writing-plans` | sp |
-| `/build` | **Asks the user which mode first**: parallel teammates / separate session / inline solo. Each mode pairs `mzyx-skills:test-driven-development` + `mzyx-skills:verification-before-completion` per task; mode-specific skills layered on top (e.g. `using-teams` + `dispatching-parallel-agents` for the parallel mode). | sp + as |
-| `/test` | `mzyx-skills:test-driven-development` (+ `mzyx-skills:browser-testing-with-devtools` if relevant) | as |
+| `/build` | **Asks the user which mode first**: parallel teammates / separate session / inline solo. Each mode pairs `mzyx-skills:test-driven-development` + `mzyx-skills:verification-before-completion` per task; the parallel mode layers `mzyx-skills:using-teams` on top. | sp + as |
+| `/test` | `mzyx-skills:test-driven-development` | as |
 | `/code-simplify` | `mzyx-skills:code-simplification` | as |
 | `/review` | `mzyx-skills:code-review-and-quality` → `mzyx-skills:requesting-code-review` | as + sp |
 | `/ship` | Parallel fan-out: `code-reviewer` + `security-auditor` + `test-engineer` agents → `mzyx-skills:shipping-and-launch` → `mzyx-skills:verification-before-completion` → GO / NO-GO + rollback | 3 agents + as + sp |
@@ -70,14 +70,11 @@ Skills also auto-trigger on natural language as in the original repos — e.g. s
 | Explore intent                 | `brainstorming`                             | superpowers   |
 | Spec (multi-file, ambiguous)   | `spec-driven-development`                   | agent-skills  |
 | Plan (clear-enough)            | `writing-plans`                             | superpowers   |
-| Pre-code research              | `source-driven-development`                 | agent-skills  |
 | Implement (this session)       | `subagent-driven-development`               | superpowers   |
 | Implement (separate session)   | `executing-plans`                           | superpowers   |
-| Implement (parallel work)      | `dispatching-parallel-agents`               | superpowers   |
 | Write code (logic / bug / change) | `test-driven-development`                | agent-skills  |
 | Hit a bug / unexpected error   | `debugging-and-error-recovery`              | agent-skills  |
 | UI / frontend                  | `frontend-ui-engineering`                   | agent-skills  |
-| Browser verification           | `browser-testing-with-devtools`             | agent-skills  |
 | Refactor / clean up            | `code-simplification`                       | agent-skills  |
 | Pre-claim done                 | `verification-before-completion`            | superpowers   |
 | Self-review                    | `code-review-and-quality`                   | agent-skills  |
@@ -87,9 +84,6 @@ Skills also auto-trigger on natural language as in the original repos — e.g. s
 | Pre-merge / pre-launch         | `shipping-and-launch`                       | agent-skills  |
 | Wrap branch                    | `finishing-a-development-branch`            | superpowers   |
 | Record decision                | `documentation-and-adrs`                    | agent-skills  |
-| Removing old code              | `deprecation-and-migration`                 | agent-skills  |
-| CI / pipeline work             | `ci-cd-and-automation`                      | agent-skills  |
-| Tune agent context             | `context-engineering`                       | agent-skills  |
 | Write / edit a skill           | `writing-skills`                            | superpowers   |
 | Plan / pressure-test design    | `think`                                     | waza          |
 | UI direction lock              | `design`                                    | waza          |

@@ -12,7 +12,6 @@ Upstream sources (MIT licensed):
     Repo:   https://github.com/obra/superpowers
     Skills used:
       brainstorming
-      dispatching-parallel-agents
       executing-plans
       finishing-a-development-branch
       receiving-code-review
@@ -27,18 +26,13 @@ Upstream sources (MIT licensed):
     Author: Addy Osmani
     Repo:   https://github.com/addyosmani/agent-skills
     Skills used:
-      browser-testing-with-devtools
-      ci-cd-and-automation
       code-review-and-quality
       code-simplification
-      context-engineering
       debugging-and-error-recovery
-      deprecation-and-migration
       documentation-and-adrs
       frontend-ui-engineering
       performance-optimization
       shipping-and-launch
-      source-driven-development
       spec-driven-development
       test-driven-development
 
@@ -58,14 +52,20 @@ Upstream sources (MIT licensed):
 Skills explicitly excluded from upstream sets:
 
   superpowers
-    using-git-worktrees     (worktree workflow disabled in personal rules)
+    using-git-worktrees             (worktree workflow disabled in personal rules)
     write-plan / execute-plan / brainstorm  (deprecated command shims)
+    dispatching-parallel-agents     (replaced by team mode + direct Agent dispatch)
 
   agent-skills
-    api-and-interface-design  (covered by personal rules/api-design.md)
-    git-workflow-and-versioning  (covered by personal rules/principles.md)
-    security-and-hardening  (covered by personal rules/security-boundaries.md)
-    using-agent-skills  (meta-skill / discovery banner not needed)
+    api-and-interface-design        (covered by personal rules/api-design.md)
+    git-workflow-and-versioning     (covered by personal rules/principles.md)
+    security-and-hardening          (covered by personal rules/security-boundaries.md)
+    using-agent-skills              (meta-skill / discovery banner not needed)
+    browser-testing-with-devtools   (rarely fired; trimmed for budget)
+    ci-cd-and-automation            (rarely fired; trimmed for budget)
+    context-engineering             (rarely fired; trimmed for budget)
+    deprecation-and-migration       (rarely fired; trimmed for budget)
+    source-driven-development       (rarely fired; trimmed for budget)
 
 Commands and agents:
 
