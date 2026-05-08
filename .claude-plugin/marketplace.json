@@ -3,10 +3,16 @@
   "owner": {
     "name": "Nikitzu"
   },
+  "metadata": {
+    "description": "Curated Claude Code skill set — process scaffolding from superpowers, domain content from agent-skills, mixed and trimmed for daily engineering work."
+  },
   "plugins": [
     {
       "name": "mzyx-skills",
-      "source": ".",
+      "source": {
+        "source": "github",
+        "repo": "Nikitzu/mzyx-skills"
+      },
       "description": "Curated mix of superpowers + agent-skills, trimmed for daily engineering."
     }
   ]
