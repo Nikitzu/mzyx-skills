@@ -10,7 +10,6 @@
   "repository": "https://github.com/Nikitzu/mzyx-skills",
   "license": "MIT",
   "commands": "./.claude/commands",
-  "agents": "./agents",
   "keywords": [
     "skills",
     "tdd",
