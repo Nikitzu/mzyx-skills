@@ -29,8 +29,8 @@ Three-layer model:
 The pipeline. Each command invokes one or more skills. Commands ship in `.claude/commands/`; specialist agents in `agents/`.
 
 ```
-/brainstorm  →  /spec  →  /plan  →  /build  →  /review  →  /ship
-   (sp)         (as+sp)   (sp)     (asks!)    (as)       (3 agents+sp)
+/brainstorm  →  /spec  →  /plan  →  /build  →  /ship
+   (sp)         (as+sp)   (sp)     (asks!)    (3 agents+sp)
 ```
 
 | Command | Skills / agents invoked | Source |
@@ -39,10 +39,9 @@ The pipeline. Each command invokes one or more skills. Commands ship in `.claude
 | `/spec` | `mzyx-skills:brainstorming` (if fuzzy) → `mzyx-skills:spec-driven-development` | sp + as |
 | `/plan` | `mzyx-skills:writing-plans` | sp |
 | `/build` | **Asks the user which mode first**: parallel teammates / separate session / inline solo. Each mode pairs `mzyx-skills:test-driven-development` + `mzyx-skills:verification-before-completion` per task; the parallel mode layers `mzyx-skills:using-teams` on top. | sp + as |
-| `/test` | `mzyx-skills:test-driven-development` | as |
-| `/code-simplify` | `mzyx-skills:code-simplification` | as |
-| `/review` | `mzyx-skills:code-review-and-quality` | as |
 | `/ship` | Parallel fan-out: `code-reviewer` + `security-auditor` + `test-engineer` agents → `mzyx-skills:verification-before-completion` → GO / NO-GO + rollback | 3 agents + sp |
+
+Review, TDD, and simplification flow through skill auto-trigger on natural language ("review my changes", "write a failing test", "simplify this") — no wrapper commands needed.
 
 (`sp` = superpowers, `as` = agent-skills.)
 
@@ -102,7 +101,7 @@ This is the right install path. All skill cross-references in this repo use the 
 
 After install, skills appear as `mzyx-skills:brainstorming`, `mzyx-skills:test-driven-development`, etc. in the listing, and these slash commands become available:
 
-- Pipeline commands (sp/as): `/brainstorm` `/spec` `/plan` `/build` `/test` `/code-simplify` `/review` `/ship`
+- Pipeline commands (sp/as): `/brainstorm` `/spec` `/plan` `/build` `/ship`
 - Discipline skills (wz): `mzyx-skills:think` · `design` · `check` · `hunt` · `write` · `learn` · `read` · `health` (no command stubs — invoke namespaced or rely on auto-trigger)
 
 ### Alternative — symlink into `~/.claude/skills/`
