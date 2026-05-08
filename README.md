@@ -1,9 +1,10 @@
 # mzyx-skills
 
-A curated, trimmed mix of two upstream Claude Code skill libraries —
-[`superpowers`](https://github.com/obra/superpowers) and
-[`agent-skills`](https://github.com/addyosmani/agent-skills) — assembled into
-one plugin tuned for daily engineering use.
+A curated, trimmed mix of three upstream Claude Code skill libraries —
+[`superpowers`](https://github.com/obra/superpowers),
+[`agent-skills`](https://github.com/addyosmani/agent-skills), and
+[`waza`](https://github.com/tw93/waza) — assembled into one plugin tuned for
+daily engineering use.
 
 ## Why
 
@@ -12,12 +13,16 @@ duplication (review/plan/test all appear in both, plus alias commands and
 deprecated shims). This repo cherry-picks one canonical skill per concern and
 drops everything covered by personal rules files.
 
-Two-layer model:
+Three-layer model:
 
 - **Process layer (superpowers).** How work flows. Brainstorm → plan →
   execute → verify → review → finish. Lifecycle scaffolding.
 - **Domain layer (agent-skills).** How to do the work in each phase. TDD,
   debugging, simplification, performance, shipping. Content checklists.
+- **Discipline layer (waza).** Sharper opinions on think/design/check/hunt
+  plus standalone utilities for research (`/learn`), URL fetch (`/read`),
+  prose polish (`/write`), and config audit (`/health`). Eight skills, each
+  a single habit with a clear trigger.
 
 ## Slash command flow
 
@@ -39,8 +44,16 @@ The pipeline. Each command invokes one or more skills. Commands ship in `.claude
 | `/review` | `mzyx-skills:code-review-and-quality` → `mzyx-skills:requesting-code-review` | as + sp |
 | `/ship` | Parallel fan-out: `code-reviewer` + `security-auditor` + `test-engineer` agents → `mzyx-skills:shipping-and-launch` → `mzyx-skills:verification-before-completion` → GO / NO-GO + rollback | 3 agents + as + sp |
 | `/wrap` | `mzyx-skills:finishing-a-development-branch` | sp |
+| `/think` | `mzyx-skills:think` — design/value/lightweight planning before code | wz |
+| `/design` | `mzyx-skills:design` — UI direction-lock + screenshot iteration | wz |
+| `/check` | `mzyx-skills:check` — solo diff review + verification, lighter than `/ship` | wz |
+| `/hunt` | `mzyx-skills:hunt` — hypothesis-first root-cause debugging | wz |
+| `/write` | `mzyx-skills:write` — strip AI-pattern prose | wz |
+| `/learn` | `mzyx-skills:learn` — six-phase research → publish workflow | wz |
+| `/read` | `mzyx-skills:read` — fetch URL/PDF as clean Markdown | wz |
+| `/health` | `mzyx-skills:health` — Claude Code config-stack audit | wz |
 
-(`sp` = superpowers source, `as` = agent-skills source.)
+(`sp` = superpowers, `as` = agent-skills, `wz` = waza.)
 
 Skills also auto-trigger on natural language as in the original repos — e.g. saying "fix this bug" still fires `debugging-and-error-recovery`. Commands are explicit verbs for the structured pipeline, not the only entry point.
 
@@ -73,6 +86,14 @@ Skills also auto-trigger on natural language as in the original repos — e.g. s
 | CI / pipeline work             | `ci-cd-and-automation`                      | agent-skills  |
 | Tune agent context             | `context-engineering`                       | agent-skills  |
 | Write / edit a skill           | `writing-skills`                            | superpowers   |
+| Plan / pressure-test design    | `think`                                     | waza          |
+| UI direction lock              | `design`                                    | waza          |
+| Solo review + verify           | `check`                                     | waza          |
+| Hypothesis-first debug         | `hunt`                                      | waza          |
+| Polish prose                   | `write`                                     | waza          |
+| Multi-source research          | `learn`                                     | waza          |
+| Fetch URL / PDF                | `read`                                      | waza          |
+| Audit Claude Code config       | `health`                                    | waza          |
 
 ## Install
 
@@ -85,7 +106,10 @@ This is the right install path. All skill cross-references in this repo use the 
 /plugin install mzyx-skills@mzyx-skills
 ```
 
-After install, skills appear as `mzyx-skills:brainstorming`, `mzyx-skills:test-driven-development`, etc. in the listing, and the seven commands (`/brainstorm`, `/spec`, `/plan`, `/build`, `/test`, `/code-simplify`, `/review`, `/ship`, `/wrap`) become available.
+After install, skills appear as `mzyx-skills:brainstorming`, `mzyx-skills:test-driven-development`, etc. in the listing, and these slash commands become available:
+
+- Pipeline (sp/as): `/brainstorm` `/spec` `/plan` `/build` `/test` `/code-simplify` `/review` `/ship` `/wrap`
+- Discipline (wz): `/think` `/design` `/check` `/hunt` `/write` `/learn` `/read` `/health`
 
 ### Alternative — symlink into `~/.claude/skills/`
 
@@ -103,13 +127,16 @@ This repo is a curated fork. To pull selective updates from upstream:
 ```bash
 git remote add upstream-superpowers https://github.com/obra/superpowers.git
 git remote add upstream-agent-skills https://github.com/addyosmani/agent-skills.git
+git remote add upstream-waza https://github.com/tw93/waza.git
 
 git fetch upstream-superpowers
 git fetch upstream-agent-skills
+git fetch upstream-waza
 
 # See what changed in skills you actually use
 git log --oneline HEAD..upstream-superpowers/main -- skills/
 git log --oneline HEAD..upstream-agent-skills/main -- skills/
+git log --oneline HEAD..upstream-waza/main -- skills/
 
 # Cherry-pick selectively (one file at a time keeps drift minimal)
 git checkout upstream-superpowers/main -- skills/brainstorming/SKILL.md
@@ -118,6 +145,8 @@ git checkout upstream-agent-skills/main -- skills/test-driven-development/SKILL.
 
 Cherry-pick over merge. A merge would drag in the skills and behaviours
 explicitly removed here.
+
+**Waza re-strip on update.** After cherry-picking from `upstream-waza`, re-run the strip pass to remove the 🥷 emoji preamble and Chinese trigger phrases before committing — the original waza skills carry both, and they have no purpose in this fork.
 
 ## Excluded — and why
 

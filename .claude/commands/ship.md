@@ -73,7 +73,7 @@ Produce a single output:
 2. Personas do not call each other. The main agent merges in Phase B.
 3. The rollback plan is mandatory before any GO decision.
 4. If any persona returns a Critical finding, the default verdict is NO-GO unless the user explicitly accepts the risk.
-5. **Skip the fan-out only if all of the following are true:** the change touches 2 files or fewer, the diff is under 50 lines, and it does not touch auth, payments, data access, or config/env. Otherwise, default to fan-out. `/ship` is designed for production-bound changes — when the blast radius is non-trivial, run the parallel review even if the diff looks small.
+5. **Skip the fan-out only if all of the following are true:** the change touches 2 files or fewer, the diff is under 50 lines, and it does not touch auth, payments, data access, or config/env. Otherwise, default to fan-out. For solo-pass review on small changes, use `/check` instead. `/ship` is designed for production-bound changes — when the blast radius is non-trivial, run the parallel review even if the diff looks small.
 6. **Verification gate is non-negotiable.** Phase C must run before any GO verdict. A green diff in CI is not sufficient — confirm locally on the actual branch.
 
 Next step in the flow: `/wrap`.

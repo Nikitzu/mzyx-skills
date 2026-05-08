@@ -42,6 +42,19 @@ Upstream sources (MIT licensed):
       spec-driven-development
       test-driven-development
 
+  waza
+    Author: Tw93
+    Repo:   https://github.com/tw93/waza
+    Skills used (all eight imported as-is):
+      check
+      design
+      health
+      hunt
+      learn
+      read
+      think
+      write
+
 Skills explicitly excluded from upstream sets:
 
   superpowers
@@ -66,6 +79,23 @@ Commands and agents:
   Two new commands are original to this repository:
     /brainstorm  — wraps brainstorming as a verb in the pipeline
     /wrap        — wraps finishing-a-development-branch as a verb
+
+  Eight new commands wrap the imported waza skills:
+    /think /design /check /hunt /write /learn /read /health
+
+Waza skill modifications:
+
+  All eight waza skills retain their original logic. The only edits applied:
+    - Removed the 🥷 emoji prefix instruction (every SKILL.md preamble)
+    - Stripped Chinese-language trigger phrases from the `when_to_use:`
+      frontmatter and Chinese examples from skill bodies
+    - Functional regex patterns inside helper scripts (read/scripts/fetch.sh,
+      health/scripts/collect-data.sh) that detect Chinese-platform login
+      walls or AI-pattern phrases were left intact, since they are
+      classifiers, not user-facing prose
+    - No cross-reference renamespacing was needed: waza skills reference
+      each other via bare slash names (/think, /hunt, etc.) which resolve
+      to the corresponding command stubs in this plugin
 
 Skill body edits:
 
