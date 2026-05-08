@@ -80,8 +80,10 @@ Commands and agents:
     /brainstorm  — wraps brainstorming as a verb in the pipeline
     /wrap        — wraps finishing-a-development-branch as a verb
 
-  Eight new commands wrap the imported waza skills:
-    /think /design /check /hunt /write /learn /read /health
+  Waza skills are imported without command stubs to avoid listing
+  duplicates (a stub named the same as a skill would surface twice).
+  Invoke them via the namespaced skill name (e.g. mzyx-skills:think)
+  or rely on description-based auto-trigger.
 
 Waza skill modifications:
 

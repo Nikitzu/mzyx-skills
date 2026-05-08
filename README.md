@@ -44,16 +44,21 @@ The pipeline. Each command invokes one or more skills. Commands ship in `.claude
 | `/review` | `mzyx-skills:code-review-and-quality` → `mzyx-skills:requesting-code-review` | as + sp |
 | `/ship` | Parallel fan-out: `code-reviewer` + `security-auditor` + `test-engineer` agents → `mzyx-skills:shipping-and-launch` → `mzyx-skills:verification-before-completion` → GO / NO-GO + rollback | 3 agents + as + sp |
 | `/wrap` | `mzyx-skills:finishing-a-development-branch` | sp |
-| `/think` | `mzyx-skills:think` — design/value/lightweight planning before code | wz |
-| `/design` | `mzyx-skills:design` — UI direction-lock + screenshot iteration | wz |
-| `/check` | `mzyx-skills:check` — solo diff review + verification, lighter than `/ship` | wz |
-| `/hunt` | `mzyx-skills:hunt` — hypothesis-first root-cause debugging | wz |
-| `/write` | `mzyx-skills:write` — strip AI-pattern prose | wz |
-| `/learn` | `mzyx-skills:learn` — six-phase research → publish workflow | wz |
-| `/read` | `mzyx-skills:read` — fetch URL/PDF as clean Markdown | wz |
-| `/health` | `mzyx-skills:health` — Claude Code config-stack audit | wz |
 
-(`sp` = superpowers, `as` = agent-skills, `wz` = waza.)
+(`sp` = superpowers, `as` = agent-skills.)
+
+**Discipline-layer skills (waza)** ship without command stubs — invoke directly via the namespaced skill name or rely on auto-trigger:
+
+| Skill | When |
+| --- | --- |
+| `mzyx-skills:think` | rough idea → decision-complete plan before code |
+| `mzyx-skills:design` | UI direction-lock + screenshot iteration |
+| `mzyx-skills:check` | solo diff review + verification (lighter than `/ship`) |
+| `mzyx-skills:hunt` | hypothesis-first root-cause debugging |
+| `mzyx-skills:learn` | six-phase research → publish workflow |
+| `mzyx-skills:read` | fetch URL/PDF as clean Markdown |
+| `mzyx-skills:write` | strip AI-pattern prose |
+| `mzyx-skills:health` | Claude Code config-stack audit |
 
 Skills also auto-trigger on natural language as in the original repos — e.g. saying "fix this bug" still fires `debugging-and-error-recovery`. Commands are explicit verbs for the structured pipeline, not the only entry point.
 
@@ -108,8 +113,8 @@ This is the right install path. All skill cross-references in this repo use the 
 
 After install, skills appear as `mzyx-skills:brainstorming`, `mzyx-skills:test-driven-development`, etc. in the listing, and these slash commands become available:
 
-- Pipeline (sp/as): `/brainstorm` `/spec` `/plan` `/build` `/test` `/code-simplify` `/review` `/ship` `/wrap`
-- Discipline (wz): `/think` `/design` `/check` `/hunt` `/write` `/learn` `/read` `/health`
+- Pipeline commands (sp/as): `/brainstorm` `/spec` `/plan` `/build` `/test` `/code-simplify` `/review` `/ship` `/wrap`
+- Discipline skills (wz): `mzyx-skills:think` · `design` · `check` · `hunt` · `write` · `learn` · `read` · `health` (no command stubs — invoke namespaced or rely on auto-trigger)
 
 ### Alternative — symlink into `~/.claude/skills/`
 

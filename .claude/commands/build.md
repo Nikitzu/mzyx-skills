@@ -22,9 +22,9 @@ description: Execute tasks from the plan — always asks the user which executio
 8. Commit with a descriptive message
 9. Mark the task complete and move to the next one
 
-If any step fails, follow `mzyx-skills:debugging-and-error-recovery` or `/hunt` (sharper hypothesis-first discipline).
+If any step fails, follow `mzyx-skills:debugging-and-error-recovery` or `mzyx-skills:hunt` (sharper hypothesis-first discipline).
 
-For UI work in any mode, route the visual direction through `/design` before implementation; keep engineering rigor on `mzyx-skills:frontend-ui-engineering`.
+For UI work in any mode, route the visual direction through `mzyx-skills:design` before implementation; keep engineering rigor on `mzyx-skills:frontend-ui-engineering`.
 
 **Mode (a) specifics — parallel teammates:**
 
@@ -32,4 +32,4 @@ For UI work in any mode, route the visual direction through `/design` before imp
 - If `TeamCreate` is unavailable, fall back to `mzyx-skills:dispatching-parallel-agents` with the standard `Agent` tool — and warn the user that you've degraded from team mode.
 - Tasks must be genuinely independent. If they share state or have ordering, choose mode (b) or (c) instead.
 
-Next step in the flow: `/review` (or `/check` for a lighter solo pass).
+Next step in the flow: `/review` (or `mzyx-skills:check` for a lighter solo pass).
