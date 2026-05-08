@@ -1,0 +1,56 @@
+claude-skills
+
+This plugin is a curated mix of upstream skills, trimmed and reorganised
+for personal engineering use. All skill bodies retain their original
+authorship; this repository's contribution is the selection, layering,
+and lifecycle mapping.
+
+Upstream sources (MIT licensed):
+
+  superpowers
+    Author: Jesse Vincent <jesse@fsck.com>
+    Repo:   https://github.com/obra/superpowers
+    Skills used:
+      brainstorming
+      dispatching-parallel-agents
+      executing-plans
+      finishing-a-development-branch
+      receiving-code-review
+      requesting-code-review
+      subagent-driven-development
+      using-superpowers
+      verification-before-completion
+      writing-plans
+      writing-skills
+
+  agent-skills
+    Author: Addy Osmani
+    Repo:   https://github.com/addyosmani/agent-skills
+    Skills used:
+      browser-testing-with-devtools
+      ci-cd-and-automation
+      code-review-and-quality
+      code-simplification
+      context-engineering
+      debugging-and-error-recovery
+      deprecation-and-migration
+      documentation-and-adrs
+      frontend-ui-engineering
+      performance-optimization
+      shipping-and-launch
+      source-driven-development
+      spec-driven-development
+      test-driven-development
+
+Skills explicitly excluded from upstream sets:
+
+  superpowers
+    using-git-worktrees     (worktree workflow disabled in personal rules)
+    write-plan / execute-plan / brainstorm  (deprecated command shims)
+
+  agent-skills
+    api-and-interface-design  (covered by personal rules/api-design.md)
+    git-workflow-and-versioning  (covered by personal rules/principles.md)
+    security-and-hardening  (covered by personal rules/security-boundaries.md)
+    using-agent-skills  (meta-skill / discovery banner not needed)
+    All seven alias commands (ship/plan/build/test/review/spec/code-simplify)

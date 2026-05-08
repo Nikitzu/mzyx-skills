@@ -1,0 +1,13 @@
+{
+  "name": "mzyx-skills",
+  "owner": {
+    "name": "Nikitzu"
+  },
+  "plugins": [
+    {
+      "name": "mzyx-skills",
+      "source": ".",
+      "description": "Curated mix of superpowers + agent-skills, trimmed for daily engineering."
+    }
+  ]
+}
