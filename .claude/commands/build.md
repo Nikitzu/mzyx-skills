@@ -22,7 +22,7 @@ description: Execute tasks from the plan — always asks the user which executio
 8. Commit with a descriptive message
 9. Mark the task complete and move to the next one
 
-If any step fails, follow `mzyx-skills:debugging-and-error-recovery` or `mzyx-skills:hunt` (sharper hypothesis-first discipline).
+If any step fails, follow `mzyx-skills:hunt` (hypothesis-first root-cause discipline before touching code).
 
 For UI work in any mode, route the visual direction through `mzyx-skills:design` before implementation; keep engineering rigor on `mzyx-skills:frontend-ui-engineering`.
 

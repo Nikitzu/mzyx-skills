@@ -93,14 +93,13 @@ skills/
 ## SKILL.md Structure
 
 **Frontmatter (YAML):**
-- Two required fields: `name` and `description` (see [agentskills.io/specification](https://agentskills.io/specification) for all supported fields)
-- Max 1024 characters total
+- Two required fields: `name` and `description` (see [agentskills.io/specification](https://agentskills.io/specification) for the open standard). Claude Code also supports `when_to_use`, `allowed-tools`, `disallowed-tools`, `model`, `disable-model-invocation`, and `context: fork`.
 - `name`: Use letters, numbers, and hyphens only (no parentheses, special chars)
-- `description`: Third-person, describes ONLY when to use (NOT what it does)
-  - Start with "Use when..." to focus on triggering conditions
+- `description`: Third-person. State **both what the skill does and when to use it** — current Claude Code guidance requires both, not when-only.
+  - Lead with the strongest trigger phrase so it survives listing truncation
   - Include specific symptoms, situations, and contexts
-  - **NEVER summarize the skill's process or workflow** (see CSO section for why)
-  - Keep under 500 characters if possible
+  - State *what* the skill does (its capability/outcome) — but do **NOT** summarize the step-by-step process or workflow (see CSO section: a workflow summary becomes a shortcut Claude follows instead of reading the body)
+  - Claude Code truncates the combined `description` + `when_to_use` at 1,536 characters in the skill listing. Keep `description` well under the 1,024-char frontmatter cap; target ~150–350 chars for portability across listing budgets.
 
 ```markdown
 ---
@@ -281,7 +280,7 @@ wc -w skills/path/SKILL.md
 
 Use skill name only, with explicit requirement markers:
 - ✅ Good: `**REQUIRED SUB-SKILL:** Use mzyx-skills:test-driven-development`
-- ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand mzyx-skills:debugging-and-error-recovery`
+- ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand mzyx-skills:hunt`
 - ❌ Bad: `See skills/testing/test-driven-development` (unclear if required)
 - ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
 
@@ -371,193 +370,9 @@ pptx/
 ```
 When: Reference material too large for inline
 
-## The Iron Law (Same as TDD)
+## Testing Skills
 
-```
-NO SKILL WITHOUT A FAILING TEST FIRST
-```
-
-This applies to NEW skills AND EDITS to existing skills.
-
-Write skill before testing? Delete it. Start over.
-Edit skill without testing? Same violation.
-
-**No exceptions:**
-- Not for "simple additions"
-- Not for "just adding a section"
-- Not for "documentation updates"
-- Don't keep untested changes as "reference"
-- Don't "adapt" while running tests
-- Delete means delete
-
-**REQUIRED BACKGROUND:** The mzyx-skills:test-driven-development skill explains why this matters. Same principles apply to documentation.
-
-## Testing All Skill Types
-
-Different skill types need different test approaches:
-
-### Discipline-Enforcing Skills (rules/requirements)
-
-**Examples:** TDD, verification-before-completion, designing-before-coding
-
-**Test with:**
-- Academic questions: Do they understand the rules?
-- Pressure scenarios: Do they comply under stress?
-- Multiple pressures combined: time + sunk cost + exhaustion
-- Identify rationalizations and add explicit counters
-
-**Success criteria:** Agent follows rule under maximum pressure
-
-### Technique Skills (how-to guides)
-
-**Examples:** condition-based-waiting, root-cause-tracing, defensive-programming
-
-**Test with:**
-- Application scenarios: Can they apply the technique correctly?
-- Variation scenarios: Do they handle edge cases?
-- Missing information tests: Do instructions have gaps?
-
-**Success criteria:** Agent successfully applies technique to new scenario
-
-### Pattern Skills (mental models)
-
-**Examples:** reducing-complexity, information-hiding concepts
-
-**Test with:**
-- Recognition scenarios: Do they recognize when pattern applies?
-- Application scenarios: Can they use the mental model?
-- Counter-examples: Do they know when NOT to apply?
-
-**Success criteria:** Agent correctly identifies when/how to apply pattern
-
-### Reference Skills (documentation/APIs)
-
-**Examples:** API documentation, command references, library guides
-
-**Test with:**
-- Retrieval scenarios: Can they find the right information?
-- Application scenarios: Can they use what they found correctly?
-- Gap testing: Are common use cases covered?
-
-**Success criteria:** Agent finds and correctly applies reference information
-
-## Common Rationalizations for Skipping Testing
-
-| Excuse | Reality |
-|--------|---------|
-| "Skill is obviously clear" | Clear to you ≠ clear to other agents. Test it. |
-| "It's just a reference" | References can have gaps, unclear sections. Test retrieval. |
-| "Testing is overkill" | Untested skills have issues. Always. 15 min testing saves hours. |
-| "I'll test if problems emerge" | Problems = agents can't use skill. Test BEFORE deploying. |
-| "Too tedious to test" | Testing is less tedious than debugging bad skill in production. |
-| "I'm confident it's good" | Overconfidence guarantees issues. Test anyway. |
-| "Academic review is enough" | Reading ≠ using. Test application scenarios. |
-| "No time to test" | Deploying untested skill wastes more time fixing it later. |
-
-**All of these mean: Test before deploying. No exceptions.**
-
-## Bulletproofing Skills Against Rationalization
-
-Skills that enforce discipline (like TDD) need to resist rationalization. Agents are smart and will find loopholes when under pressure.
-
-**Psychology note:** Understanding WHY persuasion techniques work helps you apply them systematically. See persuasion-principles.md for research foundation (Cialdini, 2021; Meincke et al., 2025) on authority, commitment, scarcity, social proof, and unity principles.
-
-### Close Every Loophole Explicitly
-
-Don't just state the rule - forbid specific workarounds:
-
-<Bad>
-```markdown
-Write code before test? Delete it.
-```
-</Bad>
-
-<Good>
-```markdown
-Write code before test? Delete it. Start over.
-
-**No exceptions:**
-- Don't keep it as "reference"
-- Don't "adapt" it while writing tests
-- Don't look at it
-- Delete means delete
-```
-</Good>
-
-### Address "Spirit vs Letter" Arguments
-
-Add foundational principle early:
-
-```markdown
-**Violating the letter of the rules is violating the spirit of the rules.**
-```
-
-This cuts off entire class of "I'm following the spirit" rationalizations.
-
-### Build Rationalization Table
-
-Capture rationalizations from baseline testing (see Testing section below). Every excuse agents make goes in the table:
-
-```markdown
-| Excuse | Reality |
-|--------|---------|
-| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
-| "I'll test after" | Tests passing immediately prove nothing. |
-| "Tests after achieve same goals" | Tests-after = "what does this do?" Tests-first = "what should this do?" |
-```
-
-### Create Red Flags List
-
-Make it easy for agents to self-check when rationalizing:
-
-```markdown
-## Red Flags - STOP and Start Over
-
-- Code before test
-- "I already manually tested it"
-- "Tests after achieve the same purpose"
-- "It's about spirit not ritual"
-- "This is different because..."
-
-**All of these mean: Delete code. Start over with TDD.**
-```
-
-### Update CSO for Violation Symptoms
-
-Add to description: symptoms of when you're ABOUT to violate the rule:
-
-```yaml
-description: use when implementing any feature or bugfix, before writing implementation code
-```
-
-## RED-GREEN-REFACTOR for Skills
-
-Follow the TDD cycle:
-
-### RED: Write Failing Test (Baseline)
-
-Run pressure scenario with subagent WITHOUT the skill. Document exact behavior:
-- What choices did they make?
-- What rationalizations did they use (verbatim)?
-- Which pressures triggered violations?
-
-This is "watch the test fail" - you must see what agents naturally do before writing the skill.
-
-### GREEN: Write Minimal Skill
-
-Write skill that addresses those specific rationalizations. Don't add extra content for hypothetical cases.
-
-Run same scenarios WITH skill. Agent should now comply.
-
-### REFACTOR: Close Loopholes
-
-Agent found new rationalization? Add explicit counter. Re-test until bulletproof.
-
-**Testing methodology:** See @testing-skills-with-subagents.md for the complete testing methodology:
-- How to write pressure scenarios
-- Pressure types (time, sunk cost, authority, exhaustion)
-- Plugging holes systematically
-- Meta-testing techniques
+Skill testing is mandatory — the Iron Law (**no skill without a failing test first**) applies to new skills AND edits to existing ones. For the full methodology — per-type test approaches, rationalization bulletproofing, and RED-GREEN-REFACTOR for skills — see `reference/testing-skills.md`.
 
 ## Anti-Patterns
 

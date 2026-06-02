@@ -98,11 +98,40 @@ These thoughts mean STOP—you're rationalizing:
 
 When multiple skills could apply, use this order:
 
-1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
-2. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
+1. **Process skills first** (brainstorming, hunt) - these determine HOW to approach the task
+2. **Implementation skills second** (test-driven-development, frontend-ui-engineering, design) - these guide execution
 
 "Let's build X" → brainstorming first, then implementation skills.
-"Fix this bug" → debugging first, then domain-specific skills.
+"Fix this bug" → hunt first, then domain-specific skills.
+
+## Canonical Pipeline & Boundaries
+
+The structured lifecycle:
+
+`/brainstorm` → `/spec` → `/plan` → `/build` → `/ship`
+
+- **brainstorming** — explore intent and design alternatives. First, before specs or code.
+- **spec-driven-development** (`/spec`) — multi-file or ambiguous features; pin the *what* before the *how*.
+- **writing-plans** (`/plan`) — clear-enough change; sequence into verifiable tasks.
+- **build** — execute: `subagent-driven-development` (in-session parallel) or `executing-plans` (separate session, checkpoints); `test-driven-development` per task; `verification-before-completion` before done.
+- **check** / **ship** — review-and-act-and-ship; GO/NO-GO.
+
+When two skills compete, pick by boundary:
+
+| Need | Use | Not |
+|---|---|---|
+| Find a bug / failure root cause | `hunt` | code review |
+| Multi-axis review, no shipping | `code-review-and-quality` | `check` |
+| Review then commit / release / triage | `check` | `code-review-and-quality` |
+| Refactor for clarity, behavior unchanged | `code-simplification` | `code-review-and-quality` |
+| Full feature design | `brainstorming` | `think` |
+| Lightweight keep-or-kill / value judgment | `think` | `brainstorming` |
+| Ambiguous feature, pin the *what* | `spec-driven-development` | `writing-plans` |
+| Clear multi-step change, sequence it | `writing-plans` | `spec-driven-development` |
+| Visual / aesthetic UI, screenshot iteration | `design` | `frontend-ui-engineering` |
+| UI structure / state / behavior engineering | `frontend-ui-engineering` | `design` |
+| Fetch one URL / PDF | `read` | `learn` |
+| Multi-source research workflow | `learn` | `read` |
 
 ## Skill Types
 

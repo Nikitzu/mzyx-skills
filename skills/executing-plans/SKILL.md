@@ -1,6 +1,6 @@
 ---
 name: executing-plans
-description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
+description: "Executes a written implementation plan in a separate session with human review checkpoints between phases. Use for long-horizon work needing explicit gates. Not for in-session parallel task dispatch (use subagent-driven-development)."
 ---
 
 # Executing Plans

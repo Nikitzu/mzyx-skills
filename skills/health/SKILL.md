@@ -2,6 +2,7 @@
 name: health
 description: "Runs a budget-aware audit of the Claude Code config stack when Claude ignores instructions, behaves inconsistently, hooks malfunction, MCP servers need auditing, or users ask why /health used many tokens. Flags issues by severity. Not for debugging code or reviewing PRs."
 when_to_use: "Claude ignoring instructions, check config, settings not working, audit config"
+model: sonnet
 
 metadata:
   version: "3.17.0"

@@ -58,7 +58,7 @@ Review, TDD, and simplification flow through skill auto-trigger on natural langu
 | `mzyx-skills:write` | strip AI-pattern prose |
 | `mzyx-skills:health` | Claude Code config-stack audit |
 
-Skills also auto-trigger on natural language as in the original repos — e.g. saying "fix this bug" still fires `debugging-and-error-recovery`. Commands are explicit verbs for the structured pipeline, not the only entry point.
+Skills also auto-trigger on natural language as in the original repos — e.g. saying "fix this bug" still fires `hunt`. Commands are explicit verbs for the structured pipeline, not the only entry point.
 
 ## Lifecycle map
 
@@ -71,7 +71,7 @@ Skills also auto-trigger on natural language as in the original repos — e.g. s
 | Implement (this session)       | `subagent-driven-development`               | superpowers   |
 | Implement (separate session)   | `executing-plans`                           | superpowers   |
 | Write code (logic / bug / change) | `test-driven-development`                | agent-skills  |
-| Hit a bug / unexpected error   | `debugging-and-error-recovery`              | agent-skills  |
+| Hit a bug / unexpected error   | `hunt`                                      | waza          |
 | UI / frontend                  | `frontend-ui-engineering`                   | agent-skills  |
 | Refactor / clean up            | `code-simplification`                       | agent-skills  |
 | Pre-claim done                 | `verification-before-completion`            | superpowers   |
