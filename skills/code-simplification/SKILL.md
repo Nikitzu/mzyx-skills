@@ -1,6 +1,6 @@
 ---
 name: code-simplification
-description: Simplifies code for clarity. Use when refactoring code for clarity without changing behavior. Use when code works but is harder to read, maintain, or extend than it should be. Use when reviewing code that has accumulated unnecessary complexity.
+description: "Refactors working code for clarity without changing behavior — reduces complexity, improves names, removes indirection. Use when code works but is hard to read, maintain, or extend. Not for finding bugs or multi-axis quality assessment (use code-review-and-quality)."
 ---
 
 # Code Simplification

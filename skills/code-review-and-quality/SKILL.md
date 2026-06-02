@@ -1,6 +1,7 @@
 ---
 name: code-review-and-quality
-description: Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent, or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch.
+description: Multi-axis code-review assessment — correctness, security, performance, readability — without shipping. Use to review a diff or PR written by you, another agent, or a human before merge. Not for the commit/release/push/triage flow (use check) or debugging a failure (use hunt).
+disallowed-tools: Edit, Write
 ---
 
 # Code Review and Quality
@@ -310,11 +311,6 @@ Part of code review is dependency review:
 - [ ] **Approve** — Ready to merge
 - [ ] **Request changes** — Issues must be addressed
 ```
-## See Also
-
-- For detailed security review guidance, see `references/security-checklist.md`
-- For performance review checks, see `references/performance-checklist.md`
-
 ## Common Rationalizations
 
 | Rationalization | Reality |

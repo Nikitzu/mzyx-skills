@@ -1,7 +1,7 @@
 ---
 name: check
-description: "Reviews code diffs and release-ready changes after implementation, executes approved implementation plans, extracts project-specific constraints from repository context, auto-fixes safe issues, and drives approved release, publish, push, release-reaction, and issue/PR follow-through. Also triages issues and PRs when the user mentions them. Not for exploring ideas, debugging, or document prose review."
-when_to_use: "review, release, publish, push, release reaction, GitHub reaction, close issue, issue close, review my code, check changes, before merge, before release, code review, code-review"
+description: "Review-and-ship workhorse: reviews a diff, auto-fixes safe issues, then drives the approved commit, tag, release, publish, push, and issue/PR triage. Use before merging or shipping, or to triage issues/PRs. Not for review-only assessment without acting (use code-review-and-quality), exploring ideas, or debugging."
+when_to_use: "review then ship, release, publish, push, release reaction, GitHub reaction, close issue, issue triage, before merge, before release, ship if green"
 
 metadata:
   version: "3.22.0"

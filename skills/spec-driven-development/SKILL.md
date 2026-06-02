@@ -1,6 +1,6 @@
 ---
 name: spec-driven-development
-description: Spec-first feature development. Invoke explicitly.
+description: "Spec-first feature development: write a structured specification (goals, scope, acceptance criteria, edge cases) before any code. Use for multi-file or ambiguous features where the what must be pinned down before the how. Not for clear small changes (use writing-plans) or idea exploration (use brainstorming)."
 ---
 
 # Spec-Driven Development

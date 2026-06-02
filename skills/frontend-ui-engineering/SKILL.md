@@ -1,6 +1,6 @@
 ---
 name: frontend-ui-engineering
-description: Production-quality UI engineering guidance. Invoke explicitly.
+description: "Production UI engineering: component architecture, state, forms, data fetching, responsive layout, and accessibility in React/TypeScript. Use when building or refactoring UI behavior and structure. Not for pure visual styling or screenshot iteration (use design) or backend logic."
 ---
 
 # Frontend UI Engineering
@@ -291,10 +291,6 @@ function useToggleTask() {
   });
 }
 ```
-
-## See Also
-
-For detailed accessibility requirements and testing tools, see `references/accessibility-checklist.md`.
 
 ## Common Rationalizations
 

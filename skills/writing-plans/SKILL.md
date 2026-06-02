@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: Use when you have a spec or requirements for a multi-step task, before touching code
+description: "Breaks a spec or requirements into an ordered, verifiable task plan with acceptance criteria before touching code. Use for a clear-enough multi-step change that needs sequencing. Not for ambiguous features needing a spec first (use spec-driven-development) or open-ended ideation (use brainstorming)."
 ---
 
 # Writing Plans
