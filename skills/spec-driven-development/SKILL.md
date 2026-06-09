@@ -21,14 +21,14 @@ Write a structured specification before writing any code. The spec is the shared
 
 ## The Gated Workflow
 
-Spec-driven development has four phases. Do not advance to the next phase until the current one is validated.
+Spec-driven development has five phases. Do not advance to the next phase until the current one is validated.
 
 ```
-SPECIFY ──→ PLAN ──→ TASKS ──→ IMPLEMENT
-   │          │        │          │
-   ▼          ▼        ▼          ▼
- Human      Human    Human      Human
- reviews    reviews  reviews    reviews
+SPECIFY ──→ CLARIFY ──→ PLAN ──→ TASKS ──→ IMPLEMENT
+   │           │          │        │          │
+   ▼           ▼          ▼        ▼          ▼
+ Human       Human      Human    Human      Human
+ reviews     answers    reviews  reviews    reviews
 ```
 
 ### Phase 1: Specify
@@ -47,6 +47,26 @@ ASSUMPTIONS I'M MAKING:
 ```
 
 Don't silently fill in ambiguous requirements. The spec's entire purpose is to surface misunderstandings *before* code gets written — assumptions are the most dangerous form of misunderstanding.
+
+**Write functional requirements in EARS notation.** Prose requirements hide ambiguity; EARS (Easy Approach to Requirements Syntax) forces each requirement into a testable trigger-response shape. Every functional requirement should map to one of these patterns:
+
+```
+Ubiquitous:    THE SYSTEM SHALL [expected behavior]
+Event-driven:  WHEN [trigger] THE SYSTEM SHALL [expected behavior]
+State-driven:  WHILE [in a state] THE SYSTEM SHALL [expected behavior]
+Conditional:   IF [condition], THEN THE SYSTEM SHALL [expected behavior]
+Optional:      WHERE [feature is included] THE SYSTEM SHALL [expected behavior]
+```
+
+Example — vague "users can reset their password" becomes:
+
+```
+WHEN a user submits a valid email on the reset form THE SYSTEM SHALL send a reset link valid for 1 hour.
+IF the email is not registered, THEN THE SYSTEM SHALL show the same confirmation message (no account enumeration).
+WHILE a reset link is expired THE SYSTEM SHALL reject it and prompt to request a new one.
+```
+
+Each EARS line is one acceptance test. If a requirement can't be written this way, it's not yet concrete enough to build.
 
 **Write a spec document covering these six core areas:**
 
@@ -86,6 +106,9 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 
 ## Objective
 [What we're building and why. User stories or acceptance criteria.]
+
+## Functional Requirements
+[Each requirement in EARS notation — WHEN/WHILE/IF...THEN/WHERE + THE SYSTEM SHALL. One line = one acceptance test.]
 
 ## Tech Stack
 [Framework, language, key dependencies with versions]
@@ -128,7 +151,25 @@ REFRAMED SUCCESS CRITERIA:
 
 This lets you loop, retry, and problem-solve toward a clear goal rather than guessing what "faster" means.
 
-### Phase 2: Plan
+### Phase 2: Clarify
+
+Before planning, hunt the spec for ambiguity and close it with targeted questions. Cheap rework here prevents expensive rework after code exists.
+
+- Scan every functional requirement, boundary, and success criterion for under-specified behavior: unhandled error paths, undefined edge cases, missing limits (rate, size, timeout), unstated non-functional targets.
+- Ask focused, answerable questions — not open-ended ones. Prefer multiple-choice or yes/no over "what do you want?".
+- Record each answer back into the spec (a `## Clarifications` section) so the resolved decision is durable, not buried in chat.
+
+```
+CLARIFICATIONS NEEDED:
+1. Reset link reuse — single-use, or valid until expiry? → [single-use / reusable-until-expiry]
+2. Concurrent reset requests — invalidate prior links, or allow multiple live? → [invalidate / allow]
+3. Rate limit on reset requests per email? → [none / N per hour — specify N]
+→ Answer these before I plan.
+```
+
+Skip only when the spec has zero open questions. If you wrote any assumption in Phase 1, it belongs here as a question first.
+
+### Phase 3: Plan
 
 With the validated spec, generate a technical implementation plan:
 
@@ -140,7 +181,7 @@ With the validated spec, generate a technical implementation plan:
 
 The plan should be reviewable: the human should be able to read it and say "yes, that's the right approach" or "no, change X."
 
-### Phase 3: Tasks
+### Phase 4: Tasks
 
 Break the plan into discrete, implementable tasks:
 
@@ -158,7 +199,7 @@ Break the plan into discrete, implementable tasks:
   - Files: [Which files will be touched]
 ```
 
-### Phase 4: Implement
+### Phase 5: Implement
 
 Execute tasks one at a time following the `test-driven-development` skill. Load the right spec sections and source files at each step rather than flooding the agent with the entire spec.
 
@@ -194,6 +235,8 @@ The spec is a living document, not a one-time artifact:
 Before proceeding to implementation, confirm:
 
 - [ ] The spec covers all six core areas
+- [ ] Functional requirements are written in EARS notation (each maps to one acceptance test)
+- [ ] All clarifications are resolved and recorded in the spec (no open assumptions left)
 - [ ] The human has reviewed and approved the spec
 - [ ] Success criteria are specific and testable
 - [ ] Boundaries (Always/Ask First/Never) are defined
