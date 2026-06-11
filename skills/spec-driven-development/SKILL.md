@@ -137,6 +137,8 @@ Each EARS line is one acceptance test. If a requirement can't be written this wa
 [Anything unresolved that needs human input]
 ```
 
+Save this as `SPEC.md` in the project root while it is the active spec. See "Spec Lifecycle and Location" below for where it goes once finalized.
+
 **Reframe instructions as success criteria.** When receiving vague requirements, translate them into concrete conditions:
 
 ```
@@ -203,13 +205,22 @@ Break the plan into discrete, implementable tasks:
 
 Execute tasks one at a time following the `test-driven-development` skill. Load the right spec sections and source files at each step rather than flooding the agent with the entire spec.
 
+## Spec Lifecycle and Location
+
+The spec moves through two locations over its life:
+
+- **Active (in progress):** the spec lives as `SPEC.md` in the project root. There is exactly one active `SPEC.md` at a time. The root location keeps the current work obvious and gives `/plan` a single, predictable file to read.
+- **Finalized:** once the spec is human-approved and ready to implement, move `SPEC.md` into the `specs/` folder and rename it to a descriptive slug derived from its contents (for example, `specs/password-reset-flow.md`). Create `specs/` if it is missing. The root is then free for the next active spec.
+
+`specs/` is version-controlled. Plans and tasks (the `tasks/plan.md` and `tasks/todo.md` artifacts produced downstream) stay out of git. Add `tasks/` to `.gitignore`.
+
 ## Keeping the Spec Alive
 
 The spec is a living document, not a one-time artifact:
 
 - **Update when decisions change** — If you discover the data model needs to change, update the spec first, then implement.
 - **Update when scope changes** — Features added or cut should be reflected in the spec.
-- **Commit the spec** — The spec belongs in version control alongside the code.
+- **Commit the spec:** The active `SPEC.md` and the finalized `specs/<name>.md` both belong in version control alongside the code. Only `tasks/` stays untracked.
 - **Reference the spec in PRs** — Link back to the spec section that each PR implements.
 
 ## Common Rationalizations
@@ -240,4 +251,6 @@ Before proceeding to implementation, confirm:
 - [ ] The human has reviewed and approved the spec
 - [ ] Success criteria are specific and testable
 - [ ] Boundaries (Always/Ask First/Never) are defined
-- [ ] The spec is saved to a file in the repository
+- [ ] The active spec is saved as `SPEC.md` in the project root
+- [ ] On finalization, `SPEC.md` is moved to `specs/<descriptive-name>.md` and the root is cleared for the next spec
+- [ ] `tasks/` is gitignored (plans and tasks stay out of version control)
