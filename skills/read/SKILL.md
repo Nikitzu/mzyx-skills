@@ -2,6 +2,7 @@
 name: read
 description: "Fetches any URL or PDF as clean Markdown for reading, quoting, citation, or downstream work. Handles paywalls, JS-heavy pages, X/Twitter, and Chinese platforms via proxy cascade. Not for local text files already in the repo."
 when_to_use: "any URL or PDF to fetch, read this, check this URL, fetch this page"
+model: sonnet
 
 metadata:
   version: "3.14.0"
