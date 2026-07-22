@@ -17,6 +17,48 @@ A patch applied to a symptom creates a new bug somewhere else.
 
 Name a specific file, function, line, or condition. "A state management issue" is not testable. "Stale cache in `useUser` at `src/hooks/user.ts:42` because the dependency array is missing `userId`" is testable. If you cannot be that specific, you do not have a hypothesis yet.
 
+## Build the Loop Before the Hypothesis
+
+**This is the skill. Everything after it is mechanical.** With a **tight** pass/fail signal that goes red on *this* bug, you will find the cause: bisection, hypothesis testing, and instrumentation all just consume the loop. Without one, no amount of staring at code will save you.
+
+Spend disproportionate effort here. Be aggressive, be creative, refuse to give up.
+
+### Ways to construct one, in roughly this order
+
+1. **Failing test** at whatever seam reaches the bug: unit, integration, e2e.
+2. **Curl or HTTP script** against a running dev server.
+3. **CLI invocation** with a fixture input, diffing stdout against known-good output.
+4. **Headless browser script** (Playwright, Puppeteer) driving the UI and asserting on DOM, console, or network.
+5. **Replay a captured trace.** Save a real request, payload, or event log to disk and replay it through the code path in isolation.
+6. **Throwaway harness.** A minimal subset of the system (one service, mocked deps) that hits the bug code path in a single call.
+7. **Property or fuzz loop.** For "sometimes wrong output", run a thousand random inputs and look for the failure mode.
+8. **Bisection harness.** For a bug that appeared between two known states, automate "boot at state X, check, repeat" so `git bisect run` can drive it (see Bisect Mode).
+9. **Differential loop.** Run the same input through two versions or two configs and diff the outputs.
+10. **Human-driven script.** Last resort, when a human must click. Script the steps so the loop is still structured, and feed the captured output back.
+
+### Tighten the loop
+
+Treat the loop as a product. Once you have one, tighten it: make it faster (cache setup, skip unrelated init, narrow scope), make the signal sharper (assert the specific symptom, not "didn't crash"), make it more deterministic (pin time, seed RNG, isolate the filesystem, freeze the network). A 30-second flaky loop is barely better than nothing; a 2-second deterministic one is a superpower.
+
+### Completion criterion: a tight loop that goes red
+
+Done when you can name **one command** you have **already run at least once** (paste the invocation and its output) that is:
+
+- [ ] **Red-capable.** Drives the actual bug code path and asserts the user's exact symptom, so it goes red now and green once fixed. Not "runs without erroring".
+- [ ] **Deterministic.** Same verdict every run.
+- [ ] **Fast.** Seconds, not minutes.
+- [ ] **Agent-runnable.** You can run it unattended.
+
+Catching yourself reading code to build a theory before this command exists is the exact failure this section prevents. No red-capable command, no hypothesis.
+
+### Non-deterministic bugs
+
+The goal is not a clean repro but a **higher reproduction rate**. Loop the trigger 100 times, parallelise, add stress, narrow timing windows, inject sleeps. A 50% flake is debuggable, 1% is not. Keep raising the rate until it is.
+
+### When you genuinely cannot build a loop
+
+Stop and say so explicitly. List what you tried. Ask the user for access to an environment that reproduces it, a captured artifact (HAR file, log dump, core dump, timestamped screen recording), or permission to add temporary production instrumentation. Do not proceed to hypothesise without a loop.
+
 ## Diagnosis Signals
 
 Good progress: a log line matches the hypothesis, you can predict the next error before running it, you understand the propagation path from root cause to symptom, you can write a test that fails on the old code. At each of these signals, find one more independent piece of evidence before committing.
@@ -79,7 +121,9 @@ Load `references/logging-techniques.md` for the full logging playbook: binary-se
 Quick rules:
 1. Place the first log at the midpoint of the execution path, not at the symptom. Binary search from there.
 2. Log discriminating facts only: sequence number, input key, branch taken, old/new state, error code.
-3. Remove temporary logs before finishing. Gate persistent diagnostics behind the project's debug flag.
+3. **Tag every temporary log with a unique prefix**, e.g. `[DEBUG-a4f2]`. Cleanup becomes a single grep, so tagged logs die and untagged ones survive by accident.
+4. Remove temporary logs before finishing. Gate persistent diagnostics behind the project's debug flag.
+5. Prefer one debugger breakpoint or REPL inspection over ten logs where the runtime supports it. Never "log everything and grep".
 
 If adding logs changes the behavior, treat that as evidence of a timing, lifecycle, or concurrency problem.
 
@@ -109,6 +153,8 @@ Regression guard:  [test file:line] or [none, reason]
 ```
 
 Status: **resolved**, **resolved with caveats** (state them), or **blocked** (state what is unknown).
+
+Before declaring done: re-run the feedback loop against the original (un-minimised) scenario, confirm the regression test passes, and grep the `[DEBUG-...]` prefix to prove every temporary instrument is gone. Then ask what would have prevented this bug. If the answer is architectural (no good test seam, tangled callers, hidden coupling), hand the specifics to `codebase-design`. Make that recommendation *after* the fix lands, when you know the most.
 
 **Regression guard rule**: for any bug that recurred or was previously "fixed", the fix is not done until:
 1. A regression test exists that fails on the unfixed code and passes on the fixed code.

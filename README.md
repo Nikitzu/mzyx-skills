@@ -1,10 +1,11 @@
 # mzyx-skills
 
-A curated, trimmed mix of three upstream Claude Code skill libraries —
+A curated, trimmed mix of four upstream Claude Code skill libraries:
 [`superpowers`](https://github.com/obra/superpowers),
-[`agent-skills`](https://github.com/addyosmani/agent-skills), and
-[`waza`](https://github.com/tw93/waza) — assembled into one plugin tuned for
-daily engineering use.
+[`agent-skills`](https://github.com/addyosmani/agent-skills),
+[`waza`](https://github.com/tw93/waza), and
+[`mattpocock/skills`](https://github.com/mattpocock/skills), assembled into one
+plugin tuned for daily engineering use.
 
 ## Why
 
@@ -13,7 +14,7 @@ duplication (review/plan/test all appear in both, plus alias commands and
 deprecated shims). This repo cherry-picks one canonical skill per concern and
 drops everything covered by personal rules files.
 
-Three-layer model:
+Four-layer model:
 
 - **Process layer (superpowers).** How work flows. Brainstorm → plan →
   execute → verify → review → finish. Lifecycle scaffolding.
@@ -23,6 +24,15 @@ Three-layer model:
   plus standalone utilities for research (`/learn`), URL fetch (`/read`),
   prose polish (`/write`), and config audit (`/health`). Eight skills, each
   a single habit with a clear trigger.
+- **Design layer (mattpocock/skills).** Vocabulary and primitives for thinking
+  before building: `grilling` (one-question-at-a-time interview),
+  `codebase-design` (deep modules, seams, leverage), `prototype` (throwaway
+  code that answers one question), and `wayfinder` (charting work too big for
+  one session). Their sharpest ideas are also grafted into existing skills:
+  loop-before-hypothesis in `hunt`, the Fowler smell baseline and a separate
+  spec axis in `code-review-and-quality`, expand-migrate-contract in
+  `writing-plans`, the triage state machine in `check`, and skill design
+  theory in `writing-skills`.
 
 ## Slash command flow
 
@@ -87,6 +97,10 @@ Skills also auto-trigger on natural language as in the original repos — e.g. s
 | Multi-source research          | `learn`                                     | waza          |
 | Fetch URL / PDF                | `read`                                      | waza          |
 | Audit Claude Code config       | `health`                                    | waza          |
+| Stress-test a decision         | `grilling`                                  | pocock        |
+| Shape a module / place a seam  | `codebase-design`                           | pocock        |
+| Answer a design question fast  | `prototype`                                 | pocock        |
+| Chart work bigger than one session | `wayfinder`                             | pocock        |
 
 ## Install
 

@@ -45,6 +45,40 @@ Upstream sources (MIT licensed):
       think
       write
 
+  mattpocock/skills
+    Author: Matt Pocock
+    Repo:   https://github.com/mattpocock/skills
+    Skills adapted (rewritten, not copied verbatim):
+      grilling          (from productivity/grilling + grill-me)
+      codebase-design   (from engineering/codebase-design, with DEEPENING.md
+                         and DESIGN-IT-TWICE.md as references/)
+      prototype         (from engineering/prototype, with LOGIC.md and UI.md
+                         as references/)
+      wayfinder         (from engineering/wayfinder, retargeted from the
+                         upstream tracker abstraction to Linear via linearis,
+                         with a local .mzyx/ markdown fallback)
+
+    Material grafted into existing mzyx skills:
+      hunt                      <- diagnosing-bugs Phase 1 (build a tight,
+                                   red-capable feedback loop before forming any
+                                   hypothesis; tagged [DEBUG-xxxx] instruments)
+      code-review-and-quality   <- code-review (Fowler smell baseline; the spec
+                                   axis reported separately, never reranked
+                                   against quality findings)
+      writing-plans             <- to-tickets (tracer-bullet vertical slices and
+                                   the expand-migrate-contract exception for
+                                   wide refactors)
+      check                     <- triage (triage role state machine, redundancy
+                                   and prior-rejection checks, the
+                                   .out-of-scope/ knowledge base, AI disclosure)
+      writing-skills            <- writing-great-skills + GLOSSARY.md
+                                   (reference/skill-design-theory.md and
+                                   reference/skill-glossary.md)
+
+    Deliberately not taken: ask-matt (this plugin's router is using-skills),
+    tdd, implement, to-spec, research, teach, handoff, and the setup, misc,
+    personal, in-progress, and deprecated buckets.
+
 Skills explicitly excluded from upstream sets:
 
   superpowers

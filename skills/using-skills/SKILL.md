@@ -116,6 +116,10 @@ The structured lifecycle:
 - **build** — execute: `subagent-driven-development` (in-session parallel) or `executing-plans` (separate session, checkpoints); `test-driven-development` per task; `verification-before-completion` before done.
 - **check** / **ship** — review-and-act-and-ship; GO/NO-GO.
 
+Two entry points sit outside the pipeline. **wayfinder** takes work too large for one session and charts it as decision tickets, feeding `/plan` once the way is clear. **grilling** is the interview primitive that `brainstorming`, `think`, and `wayfinder` reach for when a decision needs stress-testing.
+
+**User-invoked only** (the agent will not fire these, so type them): `wayfinder`, `health`, `write`.
+
 When two skills compete, pick by boundary:
 
 | Need | Use | Not |
@@ -132,6 +136,10 @@ When two skills compete, pick by boundary:
 | UI structure / state / behavior engineering | `frontend-ui-engineering` | `design` |
 | Fetch one URL / PDF | `read` | `learn` |
 | Multi-source research workflow | `learn` | `read` |
+| Stress-test a plan by interview | `grilling` | `brainstorming` |
+| Shape a module interface / place a seam | `codebase-design` | `code-simplification` |
+| Answer a design question with throwaway code | `prototype` | `frontend-ui-engineering` |
+| Chart work too big for one session | `wayfinder` | `writing-plans` |
 
 ## Skill Types
 

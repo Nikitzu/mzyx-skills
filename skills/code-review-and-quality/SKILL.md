@@ -81,6 +81,48 @@ For detailed profiling and optimization, see `performance-optimization`. Does th
 - Any missing pagination on list endpoints?
 - Any large objects created in hot paths?
 
+## The Smell Baseline
+
+The five axes ask whether the change is right. The smell baseline asks whether it is *shaped* right, and it applies even when the repo documents no standards of its own. These are Fowler's code smells (*Refactoring*, ch.3), pared to the set a diff can actually show.
+
+Two rules bind the baseline:
+
+- **The repo overrides.** A documented repo standard always wins. Where it endorses something the baseline would flag, suppress the smell.
+- **Always a judgement call.** Each smell is a labelled heuristic ("possible Feature Envy"), never a hard violation. Skip anything tooling already enforces.
+
+Read each as *what it is*, then *how to fix*, and match it against the diff:
+
+- **Mysterious Name**: a function, variable, or type whose name does not reveal what it does or holds. Rename it; if no honest name comes, the design is murky.
+- **Duplicated Code**: the same logic shape in more than one hunk or file in the change. Extract the shape, call it from both.
+- **Feature Envy**: a method that reaches into another object's data more than its own. Move the method onto the data it envies.
+- **Data Clumps**: the same few fields or parameters keep travelling together, a type wanting to be born. Bundle them and pass that.
+- **Primitive Obsession**: a primitive or string standing in for a domain concept that deserves its own type. Give the concept its own small type.
+- **Repeated Switches**: the same switch or if-cascade on the same type recurs across the change. Replace with polymorphism, or one map both sites share.
+- **Shotgun Surgery**: one logical change forces scattered edits across many files. Gather what changes together into one module.
+- **Divergent Change**: one file is edited for several unrelated reasons. Split so each module changes for one reason.
+- **Speculative Generality**: abstraction, parameters, or hooks added for needs the spec does not have. Delete it; inline back until a real need shows.
+- **Message Chains**: long `a.b().c().d()` navigation the caller should not depend on. Hide the walk behind one method on the first object.
+- **Middle Man**: a class or function that mostly delegates onward. Cut it, call the real target directly.
+- **Refused Bequest**: a subclass that ignores or overrides most of what it inherits. Drop the inheritance, use composition.
+
+Where a smell keeps recurring across a module rather than within one hunk, that is a design finding rather than a review comment. Hand it to `codebase-design`.
+
+## The Spec Axis, Reported Separately
+
+A change can pass every quality axis and still implement the wrong thing, so run **spec conformance** as its own pass and report it under its own heading.
+
+Find the spec first: an issue or ticket referenced in the commit messages, a path the user passed, or a `SPEC.md` / `specs/` / `.mzyx/` document matching the branch. If there is genuinely no spec, say "no spec available" in the report rather than inventing one from the diff.
+
+The spec pass reports three things, each quoting the spec line it rests on:
+
+1. Requirements the spec asked for that are missing or partial.
+2. Behavior in the diff that nobody asked for (scope creep).
+3. Requirements that look implemented but where the implementation looks wrong.
+
+**Do not merge or rerank the two sets of findings.** Report quality findings and spec findings side by side, and name the worst issue *within each*, not one winner across both. Cross-axis reranking is exactly what lets a clean-code pass mask a change that built the wrong feature, and vice versa.
+
+For a large diff, run the two passes as parallel subagents so neither pollutes the other's context, then aggregate them under the two headings. Subagents do not inherit skills, so paste the smell baseline into the quality subagent's brief and the spec text into the spec subagent's brief.
+
 ## Change Sizing
 
 Small, focused changes are easier to review, faster to merge, and safer to deploy. Target these sizes:

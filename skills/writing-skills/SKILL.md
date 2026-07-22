@@ -19,6 +19,10 @@ You write test cases (pressure scenarios with subagents), watch them fail (basel
 
 **Official guidance:** For Anthropic's official skill authoring best practices, see anthropic-best-practices.md. This document provides additional patterns and guidelines that complement the TDD-focused approach in this skill.
 
+**Design theory:** This skill covers structure and convention. For *why* one skill behaves predictably and another does not, read `reference/skill-design-theory.md`: the two loads (context vs cognitive) that decide model- vs user-invocation, the information hierarchy that decides what gets disclosed, leading words, and the named failure modes (premature completion, duplication, sediment, sprawl, no-op, negation). Its term definitions live in `reference/skill-glossary.md`. Load the theory before designing a new skill or diagnosing one that misfires; this file is enough for routine edits.
+
+**Measurement:** description tuning and trigger evals live in the separate `skill-creator` skill (`~/.claude/skills/skill-creator`), which carries the eval runner, the benchmark aggregator, and the A/B description improver. Use it rather than hand-tuning a description blind.
+
 ## What is a Skill?
 
 A **skill** is a reference guide for proven techniques, patterns, or tools. Skills help future Claude instances find and apply effective approaches.

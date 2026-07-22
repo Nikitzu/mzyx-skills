@@ -2,6 +2,7 @@
 name: write
 description: "Strips AI writing patterns and rewrites prose to sound natural in Chinese or English. Only activates on explicit writing or editing requests. Not for code comments, commit messages, or inline docs."
 when_to_use: "check this document, twitter, tweet, social post, draft, edit text, proofread, sound natural, polish, rewrite"
+disable-model-invocation: true
 
 metadata:
   version: "3.19.0"
