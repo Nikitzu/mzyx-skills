@@ -122,9 +122,14 @@ Skills also auto-trigger on natural language as in the original repos — e.g. s
 This is the right install path. All skill cross-references in this repo use the `mzyx-skills:` prefix, which only resolves correctly when the plugin is loaded by name.
 
 ```bash
-/plugin marketplace add github.com/Nikitzu/mzyx-skills
-/plugin install mzyx-skills@mzyx-skills
+/plugin marketplace add Nikitzu/mzyx-marketplace
+/plugin install mzyx-skills@mzyx
 ```
+
+`mzyx` is the marketplace name, not a repo name. The index lives at
+[Nikitzu/mzyx-marketplace](https://github.com/Nikitzu/mzyx-marketplace) and also
+carries `mzyx-media-skills`. This repo no longer ships its own marketplace file;
+the older `nikitzu-skills` marketplace is retired.
 
 After install, skills appear as `mzyx-skills:brainstorming`, `mzyx-skills:test-driven-development`, etc. in the listing, and these slash commands become available:
 
