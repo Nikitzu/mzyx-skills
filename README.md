@@ -68,6 +68,15 @@ Review, TDD, and simplification flow through skill auto-trigger on natural langu
 | `mzyx-skills:write` | strip AI-pattern prose |
 | `mzyx-skills:health` | Claude Code config-stack audit |
 
+**Review & orchestration skills (builder)** — also command-free, auto-triggered or invoked by name:
+
+| Skill | When |
+| --- | --- |
+| `mzyx-skills:visual-recap` | turn a PR/branch/diff into a local interactive recap before line-by-line review |
+| `mzyx-skills:agent-watchdog` | audit another agent's session, PR, or branch against what was actually asked |
+| `mzyx-skills:plan-arbiter` | two or more competing plans exist → one decision memo and execution path |
+| `mzyx-skills:stay-within-limits` | pace multi-wave subagent work against the 5-hour and weekly usage windows |
+
 Skills also auto-trigger on natural language as in the original repos — e.g. saying "fix this bug" still fires `hunt`. Commands are explicit verbs for the structured pipeline, not the only entry point.
 
 ## Lifecycle map
@@ -101,6 +110,10 @@ Skills also auto-trigger on natural language as in the original repos — e.g. s
 | Shape a module / place a seam  | `codebase-design`                           | pocock        |
 | Answer a design question fast  | `prototype`                                 | pocock        |
 | Chart work bigger than one session | `wayfinder`                             | pocock        |
+| Review a large diff at altitude | `visual-recap`                          | builder       |
+| Audit another agent's run      | `agent-watchdog`                            | builder       |
+| Reconcile competing plans      | `plan-arbiter`                              | builder       |
+| Pace work against usage limits | `stay-within-limits`                        | builder       |
 
 ## Install
 
