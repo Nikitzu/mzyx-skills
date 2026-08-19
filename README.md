@@ -76,6 +76,7 @@ Review, TDD, and simplification flow through skill auto-trigger on natural langu
 | `mzyx-skills:agent-watchdog` | audit another agent's session, PR, or branch against what was actually asked |
 | `mzyx-skills:plan-arbiter` | two or more competing plans exist → one decision memo and execution path |
 | `mzyx-skills:stay-within-limits` | pace multi-wave subagent work against the 5-hour and weekly usage windows |
+| `mzyx-skills:plow-ahead` | explicit autonomy override for unattended runs — type-only, never auto-fires |
 
 Skills also auto-trigger on natural language as in the original repos — e.g. saying "fix this bug" still fires `hunt`. Commands are explicit verbs for the structured pipeline, not the only entry point.
 
@@ -114,6 +115,7 @@ Skills also auto-trigger on natural language as in the original repos — e.g. s
 | Audit another agent's run      | `agent-watchdog`                            | builder       |
 | Reconcile competing plans      | `plan-arbiter`                              | builder       |
 | Pace work against usage limits | `stay-within-limits`                        | builder       |
+| Run unattended, decide as you go | `plow-ahead`                           | builder       |
 
 ## Install
 

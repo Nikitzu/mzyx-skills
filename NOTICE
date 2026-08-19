@@ -64,6 +64,7 @@ Upstream sources (MIT licensed):
     Skills used:
       agent-watchdog
       plan-arbiter
+      plow-ahead
       stay-within-limits
       visual-recap    (with references/ from the upstream visual-plan and
                        visual-recap skills, carried together)
@@ -153,6 +154,11 @@ Builder skill modifications:
       database. The upstream hosted-publish sections are retained as reference
       for a self-hosted Plan origin, which is opt-in and must be named
       explicitly by the user.
+    - plow-ahead is marked disable-model-invocation, so it can only be
+      invoked by typing it. A preamble was added naming what the skill
+      suspends (the ask-first defaults in the user's global instructions)
+      and what it does not (stop conditions, the scope contract, and
+      verification before any completion claim).
     - visual-recap shipped alongside an upstream visual-plan skill that is not
       part of this set. Its shared reference cores (wireframe.md, canvas.md,
       local-files.md, connection.md) were copied into visual-recap/references/
