@@ -8,3 +8,6 @@
 # (overrides global gitignore that excludes .claude/)
 !.claude/
 !.claude/**
+
+# Local plans (pre-0.8.0 habit)
+tasks/
