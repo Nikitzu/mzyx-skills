@@ -44,3 +44,49 @@ test('a result that would not validate is refused', () => {
   assert.equal(out.living, undefined);
   assert.ok(out.problems.some((p) => p.message === 'missing section: Boundaries'));
 });
+
+import { execFileSync, spawnSync } from 'node:child_process';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const CLI = new URL('./archive.mjs', import.meta.url).pathname;
+
+function repo() {
+  const root = mkdtempSync(join(tmpdir(), 'specs-'));
+  mkdirSync(join(root, 'specs', 'changes', 'tweak'), { recursive: true });
+  writeFileSync(join(root, 'specs', 'memory.md'), LIVING);
+  return root;
+}
+
+test('the CLI writes the living spec and moves the change into the dated archive', () => {
+  const root = repo();
+  writeFileSync(join(root, 'specs', 'changes', 'tweak', 'change.md'), change('## Added\n\n### New\nTHE SYSTEM SHALL work.\n'));
+  execFileSync('node', [CLI, join(root, 'specs', 'changes', 'tweak'), '--date', '2026-11-11']);
+  assert.match(readFileSync(join(root, 'specs', 'memory.md'), 'utf8'), /### New\nTHE SYSTEM SHALL work\./);
+  assert.ok(existsSync(join(root, 'specs', 'changes', 'archive', '2026-11-11-tweak', 'change.md')));
+  assert.ok(!existsSync(join(root, 'specs', 'changes', 'tweak')));
+});
+
+test('the CLI marks a superseded old spec on its first line', () => {
+  const root = repo();
+  writeFileSync(join(root, 'specs', 'old-design.md'), '# Spec: old design\n\ntext\n');
+  const md = change('## Added\n\n### New\nTHE SYSTEM SHALL work.\n').replace('area: memory', 'area: memory\nsupersedes: specs/old-design.md');
+  writeFileSync(join(root, 'specs', 'changes', 'tweak', 'change.md'), md);
+  execFileSync('node', [CLI, join(root, 'specs', 'changes', 'tweak'), '--date', '2026-11-11']);
+  assert.equal(
+    readFileSync(join(root, 'specs', 'old-design.md'), 'utf8').split('\n')[0],
+    '> Superseded by `specs/memory.md` on 2026-11-11. Kept as history.',
+  );
+});
+
+test('on any problem the CLI changes nothing and exits 1', () => {
+  const root = repo();
+  writeFileSync(join(root, 'specs', 'changes', 'tweak', 'change.md'), change('## Removed\n\n- Ghost\n'));
+  const run = spawnSync('node', [CLI, join(root, 'specs', 'changes', 'tweak'), '--date', '2026-11-11'], { encoding: 'utf8' });
+  assert.equal(run.status, 1);
+  assert.match(run.stdout, /Removed "Ghost" is not in the living spec/);
+  assert.equal(readFileSync(join(root, 'specs', 'memory.md'), 'utf8'), LIVING);
+  assert.ok(existsSync(join(root, 'specs', 'changes', 'tweak', 'change.md')));
+  assert.ok(!existsSync(join(root, 'specs', 'changes', 'archive')));
+});

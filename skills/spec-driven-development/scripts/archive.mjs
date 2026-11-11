@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+import { existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
+import { basename, dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { CORE_SECTIONS, parseChange, parseSpec, validateChange, validateSpec } from './validate.mjs';
 
 function sectionRange(lines, name) {
@@ -69,4 +72,60 @@ export function applyChange(livingMarkdown, changeMarkdown) {
     livingMarkdown === null ? newAreaSpec(change, changeMarkdown) : updatedSpec(livingMarkdown, change);
   const after = validateSpec(living);
   return after.length ? { problems: after } : { living };
+}
+
+function fail(problems, file) {
+  for (const problem of problems) console.log(`${file}:${problem.line}: ${problem.message}`);
+  console.log(`${problems.length} problem(s); nothing was changed`);
+  process.exit(1);
+}
+
+function main(argv) {
+  const folder = argv[0];
+  const dateFlag = argv.indexOf('--date');
+  const date = dateFlag >= 0 ? argv[dateFlag + 1] : new Date().toISOString().slice(0, 10);
+  if (!folder) {
+    console.error('usage: archive.mjs <specs/changes/name> [--date YYYY-MM-DD]');
+    process.exit(2);
+  }
+  const changeFile = join(folder, 'change.md');
+  const changeMarkdown = readFileSync(changeFile, 'utf8');
+  const change = parseChange(changeMarkdown);
+  const specsDir = resolve(folder, '..', '..');
+  const livingFile = join(specsDir, `${change.area}.md`);
+  const livingBefore = existsSync(livingFile) ? readFileSync(livingFile, 'utf8') : null;
+
+  const result = applyChange(livingBefore, changeMarkdown);
+  if (result.problems) fail(result.problems, changeFile);
+
+  const supersededFile = change.supersedes ? resolve(specsDir, '..', change.supersedes) : null;
+  if (supersededFile && !existsSync(supersededFile)) {
+    fail([{ line: 1, message: `supersedes ${change.supersedes}, which does not exist` }], changeFile);
+  }
+  const archived = join(specsDir, 'changes', 'archive', `${date}-${basename(resolve(folder))}`);
+  if (existsSync(archived)) fail([{ line: 1, message: `${archived} already exists` }], changeFile);
+
+  mkdirSync(dirname(archived), { recursive: true });
+  renameSync(folder, archived);
+  try {
+    writeFileSync(livingFile, result.living);
+    if (supersededFile) {
+      const old = readFileSync(supersededFile, 'utf8');
+      const mark = `> Superseded by \`specs/${change.area}.md\` on ${date}. Kept as history.`;
+      if (!old.startsWith('> Superseded by')) writeFileSync(supersededFile, `${mark}\n\n${old}`);
+    }
+  } catch (error) {
+    if (livingBefore === null) {
+      if (existsSync(livingFile)) unlinkSync(livingFile);
+    } else {
+      writeFileSync(livingFile, livingBefore);
+    }
+    renameSync(archived, folder);
+    throw error;
+  }
+  console.log(`archived ${basename(resolve(folder))} into specs/${change.area}.md and ${archived}`);
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main(process.argv.slice(2));
 }
