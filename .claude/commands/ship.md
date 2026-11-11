@@ -38,6 +38,16 @@ Once all three reports are back, the main agent (not a sub-persona) synthesizes 
 
 Before issuing a GO verdict, invoke `mzyx-skills:verification-before-completion` to confirm: tests pass on the actual branch, build is green, lint clean, no in-flight migrations missing. Evidence before assertions — never claim ship-ready without running the verification commands.
 
+## Phase C2: Verify against the spec
+
+If the work has a change folder (`specs/changes/<name>/change.md`), map every requirement in its `## Added` and `## Modified` sections to evidence before deciding:
+
+| Requirement | Evidence |
+|---|---|
+| [name] | [test name and file, or the command run and the line of its output that proves it] |
+
+Evidence must come from this branch, after the last change: a test that exercises the requirement, or a command and its output. "The code looks right" is not evidence. **Any requirement without evidence makes the verdict NO-GO**, listed under Blockers. Put the table in the decision under Spec coverage.
+
 ## Phase D — Decision and rollback
 
 Produce a single output:
@@ -50,6 +60,9 @@ Produce a single output:
 
 ### Recommended fixes (should fix before ship)
 - [Source persona: Important finding + file:line]
+
+### Spec coverage
+- [The Phase C2 table, or "no change folder"]
 
 ### Acknowledged risks (shipping anyway)
 - [Risk + mitigation]
@@ -65,6 +78,10 @@ Produce a single output:
 - [test-engineer report]
 ```
 
+## Phase E: Archive after GO
+
+On GO, and only on GO, when the work has a change folder: run `node <skill dir>/scripts/archive.mjs specs/changes/<name>`, where `<skill dir>` is the base directory of the `spec-driven-development` skill. It applies the deltas to `specs/<area>.md`, validates the result, and moves the folder to `specs/changes/archive/<date>-<name>/`, changing nothing if anything fails. Commit what it changed in the same pull request as the code, so the living spec never describes unmerged work. If it refuses, report its problems: the verdict stays GO for the code, but the PR is not ready until the delta is fixed and archived.
+
 ## Rules
 
 1. The three Phase A personas run in parallel — never sequentially.
@@ -72,4 +89,6 @@ Produce a single output:
 3. The rollback plan is mandatory before any GO decision.
 4. If any persona returns a Critical finding, the default verdict is NO-GO unless the user explicitly accepts the risk.
 5. **Skip the fan-out only if all of the following are true:** the change touches 2 files or fewer, the diff is under 50 lines, and it does not touch auth, payments, data access, or config/env. Otherwise, default to fan-out. For solo-pass review on small changes, use `mzyx-skills:check` instead. `/ship` is designed for production-bound changes — when the blast radius is non-trivial, run the parallel review even if the diff looks small.
-6. **Verification gate is non-negotiable.** Phase C must run before any GO verdict. A green diff in CI is not sufficient — confirm locally on the actual branch.
+6. **No evidence, no GO.** Every Added and Modified requirement in the change needs a row with real evidence in Phase C2.
+7. **Archive only through the script.** Never edit `specs/<area>.md` by hand to fold in a change.
+8. **Verification gate is non-negotiable.** Phase C must run before any GO verdict. A green diff in CI is not sufficient — confirm locally on the actual branch.
