@@ -2,7 +2,9 @@
 description: Execute tasks from the plan — always asks the user which execution mode to use first.
 ---
 
-**Step 1 — ALWAYS ask the user which execution mode to use.** Do not pick a default. Use `AskUserQuestion` with these three options:
+**Step 0: find the task file.** It is `specs/changes/<name>/tasks.md` for the open change (for a spec started before 0.8.0, `tasks/plan.md`). If every box is ticked, say so and point to `/ship`; do not start work. Otherwise begin at the first unticked task.
+
+**Step 1: choose the execution mode.** If the user already chose one in this conversation, use it and say which. Otherwise ask, without picking a default. Use `AskUserQuestion` with these three options:
 
 | Option | When to pick | Skills invoked |
 | --- | --- | --- |
@@ -20,7 +22,7 @@ description: Execute tasks from the plan — always asks the user which executio
 6. Run the build to verify compilation
 7. **Gate**: invoke `mzyx-skills:verification-before-completion` — do not claim a task done without evidence
 8. Commit with a descriptive message
-9. Mark the task complete and move to the next one
+9. Tick the task's box in `tasks.md` (only now, after Verify passed and the commit landed), then move to the next one
 
 If any step fails, follow `mzyx-skills:hunt` (hypothesis-first root-cause discipline before touching code).
 

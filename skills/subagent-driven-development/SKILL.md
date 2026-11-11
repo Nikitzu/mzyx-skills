@@ -55,7 +55,7 @@ digraph process {
         "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" [shape=box];
         "Code quality reviewer subagent approves?" [shape=diamond];
         "Implementer subagent fixes quality issues" [shape=box];
-        "Mark task complete in TodoWrite" [shape=box];
+        "Tick the box in tasks.md, mark complete in TodoWrite" [shape=box];
     }
 
     "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
@@ -75,8 +75,8 @@ digraph process {
     "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" -> "Code quality reviewer subagent approves?";
     "Code quality reviewer subagent approves?" -> "Implementer subagent fixes quality issues" [label="no"];
     "Implementer subagent fixes quality issues" -> "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" [label="re-review"];
-    "Code quality reviewer subagent approves?" -> "Mark task complete in TodoWrite" [label="yes"];
-    "Mark task complete in TodoWrite" -> "More tasks remain?";
+    "Code quality reviewer subagent approves?" -> "Tick the box in tasks.md, mark complete in TodoWrite" [label="yes"];
+    "Tick the box in tasks.md, mark complete in TodoWrite" -> "More tasks remain?";
     "More tasks remain?" -> "Dispatch implementer subagent (./implementer-prompt.md)" [label="yes"];
     "More tasks remain?" -> "Dispatch final code reviewer subagent for entire implementation" [label="no"];
 }
@@ -121,12 +121,22 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 - `./spec-reviewer-prompt.md` - Dispatch spec compliance reviewer subagent
 - `./code-quality-reviewer-prompt.md` - Dispatch code quality reviewer subagent
 
+## The Task File
+
+The plan is `specs/changes/<name>/tasks.md` (for a spec started before 0.8.0, `tasks/plan.md`). Its checkboxes are the progress record:
+
+- **Resume:** start at the first unticked task. Ticked tasks are done; do not redo them.
+- **Tick on verified:** tick a task (`- [ ]` to `- [x]`) only after its Verify command passed and its commit landed. Never tick ahead.
+- **Nothing left:** if every box is ticked, say so and point to `/ship` instead of starting work.
+
+The controller (this session) ticks the box after the reviewers approve and the commit lands; subagents never edit the task file.
+
 ## Example Workflow
 
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
-[Read plan file once: docs/plans/feature-plan.md]
+[Read the task file once: specs/changes/hook-install/tasks.md, first unticked task is 1]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]
 

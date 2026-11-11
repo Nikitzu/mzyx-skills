@@ -13,21 +13,29 @@ Load plan, review critically, execute all tasks, report when complete.
 
 **Note:** Tell your human partner that Superpowers works much better with access to subagents. The quality of its work will be significantly higher if run on a platform with subagent support (such as Claude Code or Codex). If subagents are available, use mzyx-skills:subagent-driven-development instead of this skill.
 
+## The Task File
+
+The plan is `specs/changes/<name>/tasks.md` (for a spec started before 0.8.0, `tasks/plan.md`). Its checkboxes are the progress record:
+
+- **Resume:** start at the first unticked task. Ticked tasks are done; do not redo them.
+- **Tick on verified:** tick a task (`- [ ]` to `- [x]`) only after its Verify command passed and its commit landed. Never tick ahead.
+- **Nothing left:** if every box is ticked, say so and point to `/ship` instead of starting work.
+
 ## The Process
 
 ### Step 1: Load and Review Plan
-1. Read plan file
+1. Read the task file and find the first unticked task
 2. Review critically - identify any questions or concerns about the plan
 3. If concerns: Raise them with your human partner before starting
-4. If no concerns: Create TodoWrite and proceed
+4. If no concerns: Create TodoWrite for the unticked tasks and proceed
 
 ### Step 2: Execute Tasks
 
 For each task:
 1. Mark as in_progress
-2. Follow each step exactly (plan has bite-sized steps)
-3. Run verifications as specified
-4. Mark as completed
+2. Implement it test first (mzyx-skills:test-driven-development)
+3. Run its Verify command and commit
+4. Tick its box in the task file, then mark it completed
 
 ### Step 3: Complete Development
 
