@@ -7,16 +7,15 @@ description: "Breaks a spec or requirements into an ordered, verifiable task pla
 
 ## Overview
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
+Write a plan an engineer with zero context for the codebase can follow: which files each task touches, which requirement it implements, how to prove it is done. Keep it short enough to read in one sitting. Show code only where its shape is the point. DRY. YAGNI. TDD. Frequent commits.
 
 Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** This should be run in a dedicated worktree (created by brainstorming skill).
+**Context:** Run it in the repository's normal checkout.
 
-**Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>.md`
-- (User preferences for plan location override this default)
+**Save the plan to:** `specs/changes/<name>/tasks.md`, next to the change it implements. Add `specs/changes/*/tasks.md` to `.gitignore` if it is not there. Write no other plan file: no `plan.md`, `todo.md`, `tasks/` or `docs/plans/`. A spec started before 0.8.0 as a root `SPEC.md` has no change folder; put its plan in `tasks/plan.md` and gitignore `tasks/`.
 
 ## Scope Check
 
@@ -45,97 +44,62 @@ Each task is a **tracer bullet**: a narrow but complete path through every layer
 
 When even the batches cannot stay green alone, keep the sequence but let them share an integration branch that all block a final integrate-and-verify task. Green is promised only there, and the plan should say so explicitly.
 
-## Bite-Sized Task Granularity
+## Task Granularity
 
-**Each step is one action (2-5 minutes):**
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
-- "Commit" - step
+Each task is one vertical slice that a fresh session can finish, test and commit on its own. `/build` runs TDD and verification inside every task, so the plan does not spell out red, green and commit steps.
 
-## Plan Document Header
+## Plan Header
 
-**Every plan MUST start with this header:**
+Start `tasks.md` with:
 
 ```markdown
-# [Feature Name] Implementation Plan
+# [Change name]: tasks
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use mzyx-skills:subagent-driven-development (recommended) or mzyx-skills:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+Change: `specs/changes/<name>/change.md`. [One line on the approach.]
 
-**Goal:** [One sentence describing what this builds]
-
-**Architecture:** [2-3 sentences about approach]
-
-**Tech Stack:** [Key technologies/libraries]
-
----
+## Contracts
+[Only if tasks share an interface: the function signatures, types or file formats every task must agree on.]
 ```
 
-## Task Structure
+## Task Shape
 
-````markdown
-### Task N: [Component Name]
-
-**Files:**
-- Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
-- Test: `tests/exact/path/to/test.py`
-
-- [ ] **Step 1: Write the failing test**
-
-```python
-def test_specific_behavior():
-    result = function(input)
-    assert result == expected
+```markdown
+- [ ] **3. Refuse stale names on archive**
+  - Covers: Stale delta
+  - Acceptance: a change that modifies a name another change removed is refused, the name is reported, and no file changes.
+  - Verify: `node --test scripts/`
+  - Files: `scripts/archive.mjs`, `scripts/archive.test.mjs`
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- **Covers** lists the change's requirement names this task implements. Every Added and Modified requirement in the change appears in at least one task; `/ship` checks the evidence against these names.
+- **Acceptance** is what is observably true when the task is done.
+- **Verify** is the exact command whose output proves it.
+- **Files** are the paths the task creates or changes.
 
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: FAIL with "function not defined"
+Add code only for a contract, an interface, or a function whose shape is the point. Everything else is left to the build, which runs TDD per task.
 
-- [ ] **Step 3: Write minimal implementation**
-
-```python
-def function(input):
-    return expected
-```
-
-- [ ] **Step 4: Run test to verify it passes**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: PASS
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
-```
-````
+Put a **Checkpoint** line between phases: what must pass before the next phase starts.
 
 ## No Placeholders
 
-Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
+Every task must be concrete enough to start without asking. These are **plan failures**; never write them:
 - "TBD", "TODO", "implement later", "fill in details"
-- "Add appropriate error handling" / "add validation" / "handle edge cases"
-- "Write tests for the above" (without actual test code)
-- "Similar to Task N" (repeat the code — the engineer may be reading tasks out of order)
-- Steps that describe what to do without showing how (code blocks required for code steps)
-- References to types, functions, or methods not defined in any task
+- "Add appropriate error handling" / "add validation" / "handle edge cases" without saying which
+- A Verify line that is not a runnable command or a specific manual check
+- "Similar to Task N" (the engineer may read tasks out of order)
+- References to types, functions or files no task or contract defines
 
 ## Remember
 - Exact file paths always
-- Complete code in every step — if a step changes code, show the code
-- Exact commands with expected output
+- Every task names the requirements it covers
+- Exact Verify commands
 - DRY, YAGNI, TDD, frequent commits
 
 ## Self-Review
 
 After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
 
-**1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
+**1. Spec coverage:** Every Added and Modified requirement name in the change appears in some task's Covers. List any that do not.
 
 **2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
 
@@ -147,7 +111,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `docs/plans/<filename>.md`. Two execution options:**
+**"Plan complete and saved to `specs/changes/<name>/tasks.md`. Two execution options:**
 
 **1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 
