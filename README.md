@@ -43,13 +43,30 @@ The pipeline. Each command invokes one or more skills. Commands ship in `.claude
    (sp)         (as+sp)   (sp)     (asks!)    (3 agents+sp)
 ```
 
+Since 0.8.0 the pipeline works on **change folders and living specs**, an idea borrowed from OpenSpec without depending on it:
+
+```
+specs/
+  <area>.md                              living spec: what the area does now
+  changes/<name>/change.md                the delta: Added, Modified, Removed, Renamed requirements
+  changes/<name>/tasks.md                 the checklist /build ticks (gitignored)
+  changes/archive/<YYYY-MM-DD>-<name>/    finished changes, kept as history
+```
+
+- `/spec` writes the delta with named EARS requirements and runs `validate.mjs` before asking for approval.
+- `/plan` writes `tasks.md`: checkbox tasks naming the requirements they cover, with an exact Verify command each.
+- `/build` resumes at the first unticked task and ticks each one after it is verified and committed.
+- `/ship` maps every changed requirement to evidence (none means NO-GO), then `archive.mjs` folds the delta into `specs/<area>.md` in the same pull request.
+
+The two scripts are plain Node with no dependencies, in `skills/spec-driven-development/scripts/`; run their tests with `node --test skills/spec-driven-development/scripts/`.
+
 | Command | Skills / agents invoked | Source |
 | --- | --- | --- |
 | `/brainstorm` | `mzyx-skills:brainstorming` | sp |
 | `/spec` | `mzyx-skills:brainstorming` (if fuzzy) → `mzyx-skills:spec-driven-development` | sp + as |
-| `/plan` | `mzyx-skills:writing-plans` | sp |
-| `/build` | **Asks the user which mode first**: parallel teammates / separate session / inline solo. Each mode pairs `mzyx-skills:test-driven-development` + `mzyx-skills:verification-before-completion` per task; the parallel mode layers `mzyx-skills:using-teams` on top. | sp + as |
-| `/ship` | Parallel fan-out: `code-reviewer` + `security-auditor` + `test-engineer` agents → `mzyx-skills:verification-before-completion` → GO / NO-GO + rollback | 3 agents + sp |
+| `/plan` | `mzyx-skills:writing-plans` (writes `specs/changes/<name>/tasks.md`) | sp |
+| `/build` | **Asks which mode first**, unless it was already chosen: parallel teammates / separate session / inline solo. Resumes at the first unticked task. Each mode pairs `mzyx-skills:test-driven-development` + `mzyx-skills:verification-before-completion` per task; the parallel mode layers `mzyx-skills:using-teams` on top. | sp + as |
+| `/ship` | Parallel fan-out: `code-reviewer` + `security-auditor` + `test-engineer` agents → `mzyx-skills:verification-before-completion` → spec coverage (evidence per changed requirement) → GO / NO-GO + rollback → archive the change | 3 agents + sp |
 
 Review, TDD, and simplification flow through skill auto-trigger on natural language ("review my changes", "write a failing test", "simplify this") — no wrapper commands needed.
 
