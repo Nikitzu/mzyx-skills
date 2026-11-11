@@ -1,3 +1,5 @@
+> Superseded by `specs/pipeline.md` on 2026-11-11. Kept as history.
+
 # Spec: Change folders and living specs (mzyx-skills 0.8.0)
 
 ## Objective
