@@ -118,7 +118,7 @@ IF the change or the resulting living spec fails validation, THEN `archive.mjs` 
 IF a change modifies, removes or renames a requirement another change already removed or renamed, THEN `archive.mjs` SHALL refuse it and name the stale requirements.
 
 ### Old-style spec in the area
-WHEN the first change archives into an area that has an older spec file outside the living layout THE SYSTEM SHALL create `specs/<area>.md` and mark the older file superseded in its first line.
+WHEN the first change archives into an area and its front matter names an older spec file in `supersedes` THE SYSTEM SHALL create `specs/<area>.md` and mark the older file superseded in its first line.
 
 ### Release
 WHEN the work merges THE SYSTEM SHALL ship as version 0.8.0 in `.claude-plugin/plugin.json`, on `main` of `Nikitzu/mzyx-skills`, tagged `v0.8.0`.
