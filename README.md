@@ -58,7 +58,7 @@ specs/
 - `/build` resumes at the first unticked task and ticks each one after it is verified and committed.
 - `/ship` maps every changed requirement to evidence (none means NO-GO), then `archive.mjs` folds the delta into `specs/<area>.md` in the same pull request.
 
-The two scripts are plain Node with no dependencies, in `skills/spec-driven-development/scripts/`; run their tests with `node --test skills/spec-driven-development/scripts/`.
+The two scripts are plain Node with no dependencies, in `skills/spec-driven-development/scripts/`; run their tests with `node --test skills/spec-driven-development/scripts/*.test.mjs`.
 
 | Command | Skills / agents invoked | Source |
 | --- | --- | --- |

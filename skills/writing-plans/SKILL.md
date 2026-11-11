@@ -67,7 +67,7 @@ Change: `specs/changes/<name>/change.md`. [One line on the approach.]
 - [ ] **3. Refuse stale names on archive**
   - Covers: Stale delta
   - Acceptance: a change that modifies a name another change removed is refused, the name is reported, and no file changes.
-  - Verify: `node --test scripts/`
+  - Verify: `node --test scripts/*.test.mjs`
   - Files: `scripts/archive.mjs`, `scripts/archive.test.mjs`
 ```
 

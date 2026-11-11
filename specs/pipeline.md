@@ -21,7 +21,7 @@ Users: anyone using the mzyx-skills plugin through the `mzyx` marketplace. A Tra
 node skills/spec-driven-development/scripts/validate.mjs specs/changes/<name>/change.md
 node skills/spec-driven-development/scripts/validate.mjs specs/<area>.md
 node skills/spec-driven-development/scripts/archive.mjs specs/changes/<name>
-node --test skills/spec-driven-development/scripts/
+node --test skills/spec-driven-development/scripts/*.test.mjs
 claude plugin validate .
 ```
 
