@@ -68,6 +68,13 @@ WHILE a reset link is expired THE SYSTEM SHALL reject it and prompt to request a
 
 Each EARS line is one acceptance test. If a requirement can't be written this way, it's not yet concrete enough to build.
 
+**Name every requirement.** Each requirement is a `###` heading holding a short unique name, followed by its one EARS line. The name is how later changes point at it, so it must survive rewording and reordering:
+
+```
+### Reset link expiry
+WHILE a reset link is expired THE SYSTEM SHALL reject it and prompt to request a new one.
+```
+
 **Write a spec document covering these six core areas:**
 
 1. **Objective** — What are we building and why? Who is the user? What does success look like?
@@ -99,16 +106,13 @@ Each EARS line is one acceptance test. If a requirement can't be written this wa
    - **Ask first:** Database schema changes, adding dependencies, changing CI config
    - **Never do:** Commit secrets, edit vendor directories, remove failing tests without approval
 
-**Spec template:**
+**Living spec template** (`specs/<area>.md`, what the area does now):
 
 ```markdown
-# Spec: [Project/Feature Name]
+# Spec: [Area]
 
 ## Objective
 [What we're building and why. User stories or acceptance criteria.]
-
-## Functional Requirements
-[Each requirement in EARS notation — WHEN/WHILE/IF...THEN/WHERE + THE SYSTEM SHALL. One line = one acceptance test.]
 
 ## Tech Stack
 [Framework, language, key dependencies with versions]
@@ -130,14 +134,50 @@ Each EARS line is one acceptance test. If a requirement can't be written this wa
 - Ask first: [...]
 - Never: [...]
 
-## Success Criteria
-[How we'll know this is done — specific, testable conditions]
+## Requirements
 
-## Open Questions
-[Anything unresolved that needs human input]
+### [Short name]
+[One EARS line: THE SYSTEM SHALL, WHEN, WHILE, IF ... THEN, or WHERE.]
+
+## Success Criteria
+[How we'll know this is done: specific, testable conditions]
 ```
 
-Save this as `SPEC.md` in the project root while it is the active spec. See "Spec Lifecycle and Location" below for where it goes once finalized.
+**Change template** (`specs/changes/<name>/change.md`, what one piece of work changes):
+
+```markdown
+---
+area: [area]
+supersedes: [optional path to an older spec file this replaces]
+---
+
+# Change: [name]
+
+## Why
+[The problem and the outcome, in a few lines.]
+
+## Added
+### [New requirement name]
+[EARS line]
+
+## Modified
+### [Existing requirement name]
+[Its new EARS line]
+
+## Removed
+- [Existing requirement name]
+
+## Renamed
+- [Old name] → [New name]
+
+## Clarifications
+[Each resolved question and its answer.]
+
+## Open Questions
+[Anything unresolved that needs human input.]
+```
+
+Use only the delta sections the change needs. A change for an area with no living spec yet carries the six core sections and only `## Added`; archiving it creates the living spec. See "Spec Lifecycle and Location" below.
 
 **Reframe instructions as success criteria.** When receiving vague requirements, translate them into concrete conditions:
 
@@ -159,7 +199,7 @@ Before planning, hunt the spec for ambiguity and close it with targeted question
 
 - Scan every functional requirement, boundary, and success criterion for under-specified behavior: unhandled error paths, undefined edge cases, missing limits (rate, size, timeout), unstated non-functional targets.
 - Ask focused, answerable questions — not open-ended ones. Prefer multiple-choice or yes/no over "what do you want?".
-- Record each answer back into the spec (a `## Clarifications` section) so the resolved decision is durable, not buried in chat.
+- Record each answer in the change's `## Clarifications` section so the resolved decision is durable, not buried in chat.
 
 ```
 CLARIFICATIONS NEEDED:
@@ -193,11 +233,13 @@ Break the plan into discrete, implementable tasks:
 - Tasks are ordered by dependency, not by perceived importance
 - No task should require changing more than ~5 files
 
-**Task template:**
+Tasks go to `specs/changes/<name>/tasks.md`; the `writing-plans` skill owns the format. Each task names the requirements it implements:
+
 ```markdown
-- [ ] Task: [Description]
+- [ ] **3. Reset link expiry**
+  - Covers: Reset link expiry
   - Acceptance: [What must be true when done]
-  - Verify: [How to confirm — test command, build, manual check]
+  - Verify: [The exact command]
   - Files: [Which files will be touched]
 ```
 
@@ -207,21 +249,36 @@ Execute tasks one at a time following the `test-driven-development` skill. Load 
 
 ## Spec Lifecycle and Location
 
-The spec moves through two locations over its life:
+```
+specs/
+  <area>.md                              living spec: what the area does now
+  changes/<name>/change.md                the delta, committed
+  changes/<name>/tasks.md                 the checklist, gitignored
+  changes/archive/<YYYY-MM-DD>-<name>/    finished changes, kept as history
+```
 
-- **Active (in progress):** the spec lives as `SPEC.md` in the project root. There is exactly one active `SPEC.md` at a time. The root location keeps the current work obvious and gives `/plan` a single, predictable file to read.
-- **Finalized:** once the spec is human-approved and ready to implement, move `SPEC.md` into the `specs/` folder and rename it to a descriptive slug derived from its contents (for example, `specs/password-reset-flow.md`). Create `specs/` if it is missing. The root is then free for the next active spec.
+1. **Write the change.** `/spec` creates `specs/changes/<name>/change.md` as a delta against `specs/<area>.md`: requirements that are added, modified, removed or renamed, by name.
+2. **Validate before asking for approval.** Run the validator and fix every problem it reports. Do not ask for approval while it reports any:
 
-`specs/` is version-controlled. Plans and tasks (the `tasks/plan.md` and `tasks/todo.md` artifacts produced downstream) stay out of git. Add `tasks/` to `.gitignore`.
+   ```bash
+   node <skill dir>/scripts/validate.mjs specs/changes/<name>/change.md
+   ```
+
+   It finds `specs/<area>.md` by itself and checks that Modified, Removed and Renamed names exist there and Added names do not. Run it on a living spec the same way.
+3. **Commit on approval.** Commit `change.md` where it is. It is not moved or renamed.
+4. **Plan and build.** `/plan` writes `tasks.md` next to it, and `/build` ticks it.
+5. **Archive at ship.** After GO, `/ship` runs `archive.mjs`, which applies the deltas to `specs/<area>.md`, validates the result, and moves the folder to `specs/changes/archive/<date>-<name>/`. It changes nothing when anything fails. Never edit a living spec by hand where the archive should.
+
+`<skill dir>` is the base directory shown when this skill loads (for archive: `<skill dir>/scripts/archive.mjs specs/changes/<name>`).
+
+A spec started before 0.8.0 as a root `SPEC.md` finishes the old way: finalized into `specs/<slug>.md`. The first change in its area names it in `supersedes`, and archiving marks it superseded.
 
 ## Keeping the Spec Alive
 
-The spec is a living document, not a one-time artifact:
-
-- **Update when decisions change** — If you discover the data model needs to change, update the spec first, then implement.
-- **Update when scope changes** — Features added or cut should be reflected in the spec.
-- **Commit the spec:** The active `SPEC.md` and the finalized `specs/<name>.md` both belong in version control alongside the code. Only `tasks/` stays untracked.
-- **Reference the spec in PRs** — Link back to the spec section that each PR implements.
+- **A decision changed mid-work:** edit the open change's delta, never the living spec, and validate again.
+- **A shipped behaviour changes:** write a new change against the living spec.
+- **Two open changes in one area:** the second to archive is refused if the first removed or renamed something it touches. Update its delta and validate again.
+- **Reference the change in PRs:** link `specs/changes/<name>/change.md`.
 
 ## Common Rationalizations
 
@@ -245,12 +302,12 @@ The spec is a living document, not a one-time artifact:
 
 Before proceeding to implementation, confirm:
 
-- [ ] The spec covers all six core areas
-- [ ] Functional requirements are written in EARS notation (each maps to one acceptance test)
+- [ ] The living spec, or a change for a new area, covers all six core areas
+- [ ] Every requirement is a named `###` heading with one EARS line (each maps to one acceptance test)
+- [ ] `validate.mjs` reports no problems for the change
 - [ ] All clarifications are resolved and recorded in the spec (no open assumptions left)
 - [ ] The human has reviewed and approved the spec
 - [ ] Success criteria are specific and testable
 - [ ] Boundaries (Always/Ask First/Never) are defined
-- [ ] The active spec is saved as `SPEC.md` in the project root
-- [ ] On finalization, `SPEC.md` is moved to `specs/<descriptive-name>.md` and the root is cleared for the next spec
-- [ ] `tasks/` is gitignored (plans and tasks stay out of version control)
+- [ ] The change lives at `specs/changes/<name>/change.md` and is committed
+- [ ] `specs/changes/*/tasks.md` is gitignored
