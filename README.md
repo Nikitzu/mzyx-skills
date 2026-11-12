@@ -40,7 +40,7 @@ The pipeline. Each command invokes one or more skills. Commands ship in `.claude
 
 ```
 /brainstorm  →  /spec  →  /plan  →  /build  →  /ship
-   (sp)         (as+sp)   (sp)     (asks!)    (3 agents+sp)
+   (sp)         (as+sp)   (sp)     (asks!)    (inline+sp)
 ```
 
 Since 0.8.0 the pipeline works on **change folders and living specs**, an idea borrowed from OpenSpec without depending on it:
@@ -66,7 +66,7 @@ The two scripts are plain Node with no dependencies, in `skills/spec-driven-deve
 | `/spec` | `mzyx-skills:brainstorming` (if fuzzy) → `mzyx-skills:spec-driven-development` | sp + as |
 | `/plan` | `mzyx-skills:writing-plans` (writes `specs/changes/<name>/tasks.md`) | sp |
 | `/build` | **Asks which mode first**, unless it was already chosen: parallel teammates / separate session / inline solo. Resumes at the first unticked task. Each mode pairs `mzyx-skills:test-driven-development` + `mzyx-skills:verification-before-completion` per task; the parallel mode layers `mzyx-skills:using-teams` on top. | sp + as |
-| `/ship` | Parallel fan-out: `code-reviewer` + `security-auditor` + `test-engineer` agents → `mzyx-skills:verification-before-completion` → spec coverage (evidence per changed requirement) → GO / NO-GO + rollback → archive the change | 3 agents + sp |
+| `/ship` | The pre-merge gate, inline with no subagents: one review of the diff (correctness, security, tests, docs) → `mzyx-skills:verification-before-completion` → spec coverage (evidence per changed requirement) → GO / NO-GO + rollback → archive the change | inline + sp |
 
 Review, TDD, and simplification flow through skill auto-trigger on natural language ("review my changes", "write a failing test", "simplify this") — no wrapper commands needed.
 
@@ -78,7 +78,7 @@ Review, TDD, and simplification flow through skill auto-trigger on natural langu
 | --- | --- |
 | `mzyx-skills:think` | rough idea → decision-complete plan before code |
 | `mzyx-skills:design` | UI direction-lock + screenshot iteration |
-| `mzyx-skills:check` | solo diff review + verification (lighter than `/ship`) |
+| `mzyx-skills:check` | solo diff review + verification, then commit, release and push (`/ship` is the gate before merge) |
 | `mzyx-skills:hunt` | hypothesis-first root-cause debugging |
 | `mzyx-skills:learn` | six-phase research → publish workflow |
 | `mzyx-skills:read` | fetch URL/PDF as clean Markdown |

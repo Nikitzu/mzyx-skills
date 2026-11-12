@@ -1,94 +1,58 @@
 ---
-description: Run the pre-launch checklist via parallel fan-out to specialist personas, then synthesize a go/no-go decision
+description: The pre-merge gate - one inline review of the change, evidence for every spec requirement, then GO or NO-GO and archive
 ---
 
-`/ship` is a **fan-out orchestrator**. It runs three specialist personas in parallel against the current change, then merges their reports into a single go/no-go decision with a rollback plan. The personas operate independently — no shared state, no ordering — which is what makes parallel execution safe and useful here.
+`/ship` is the last step before a change merges. It runs in this session, with no subagents: you review the change yourself, prove each spec requirement with evidence, and decide GO or NO-GO. Run it on the pull request before anyone merges it; after the merge it can no longer stop anything.
 
-## Phase A — Parallel fan-out
+## Step 1: Read the change
 
-Spawn three subagents concurrently using the Agent tool. **Issue all three Agent tool calls in a single assistant turn so they execute in parallel** — sequential calls defeat the purpose of this command.
+Read the real diff against the base branch (`git diff <base>...HEAD`), not a summary of it, and the change file if there is one (`specs/changes/<name>/change.md`).
 
-In Claude Code, each call passes `subagent_type` matching the persona's `name` field:
+## Step 2: Review it inline
 
-1. **`code-reviewer`** — Run a five-axis review (correctness, readability, architecture, security, performance) on the staged changes or recent commits. Output the standard review template.
-2. **`security-auditor`** — Run a vulnerability and threat-model pass. Check OWASP Top 10, secrets handling, auth/authz, dependency CVEs. Output the standard audit report.
-3. **`test-engineer`** — Analyze test coverage for the change. Identify gaps in happy path, edge cases, error paths, and concurrency scenarios. Output the standard coverage analysis.
+Go through the diff once with these questions, and write down every finding with `file:line` and a rating (Critical, Important or Minor):
 
-In other harnesses without an Agent tool, invoke each persona's system prompt sequentially and treat their outputs as if returned in parallel — the merge phase still works.
+1. **Correctness.** Edge inputs, error paths, anything the change silently skips or drops.
+2. **Security.** Untrusted input reaching paths, commands or prompts; secrets and personal data; what the change lets someone write or read that they could not before.
+3. **Tests.** Is each new behaviour covered by a test that would fail without it? Which edge cases have none?
+4. **Readability and architecture.** Only what makes the code wrong or hard to change, not style.
+5. **Infrastructure and docs.** Env vars, migrations, flags, workflows, and any instructions or docs that now describe the old behaviour.
 
-Constraints (from Claude Code's subagent model):
-- Subagents cannot spawn other subagents — do not let one persona delegate to another.
-- Each subagent gets its own context window and returns only its report to this main session.
-- If you need teammates that talk to each other instead of just reporting back, use Claude Code Agent Teams and reference these personas as teammate types (see `references/orchestration-patterns.md`).
+## Step 3: Run the checks
 
-**Persona resolution.** If you've defined your own `code-reviewer`, `security-auditor`, or `test-engineer` in `.claude/agents/` or `~/.claude/agents/`, those take precedence over this plugin's versions — `/ship` picks up your customizations automatically. This is intentional: plugin subagents sit at the bottom of Claude Code's scope priority table, so user-level definitions win by design.
+Invoke `mzyx-skills:verification-before-completion`: run the tests, build and lint on this branch and read their output. A green CI badge is not enough.
 
-## Phase B — Merge in main context
+## Step 4: Evidence for the spec
 
-Once all three reports are back, the main agent (not a sub-persona) synthesizes them:
-
-1. **Code Quality** — Aggregate Critical/Important findings from `code-reviewer` and any failing tests, lint, or build output. Resolve duplicates between reviewers.
-2. **Security** — Promote any Critical/High `security-auditor` findings to launch blockers. Cross-reference with `code-reviewer`'s security axis.
-3. **Performance** — Pull from `code-reviewer`'s performance axis; cross-check Core Web Vitals if applicable.
-4. **Accessibility** — Verify keyboard nav, screen reader support, contrast (not covered by the three personas — handle directly here, or invoke the accessibility checklist).
-5. **Infrastructure** — Env vars, migrations, monitoring, feature flags. Verify directly.
-6. **Documentation** — README, ADRs, changelog. Verify directly.
-
-## Phase C — Final gate before decision
-
-Before issuing a GO verdict, invoke `mzyx-skills:verification-before-completion` to confirm: tests pass on the actual branch, build is green, lint clean, no in-flight migrations missing. Evidence before assertions — never claim ship-ready without running the verification commands.
-
-## Phase C2: Verify against the spec
-
-If the work has a change folder (`specs/changes/<name>/change.md`), map every requirement in its `## Added` and `## Modified` sections to evidence before deciding:
+If there is a change file, give every requirement in its `## Added` and `## Modified` sections one row:
 
 | Requirement | Evidence |
 |---|---|
 | [name] | [test name and file, or the command run and the line of its output that proves it] |
 
-Evidence must come from this branch, after the last change: a test that exercises the requirement, or a command and its output. "The code looks right" is not evidence. **Any requirement without evidence makes the verdict NO-GO**, listed under Blockers. Put the table in the decision under Spec coverage.
+Evidence must come from this branch, after the last change. "The code looks right" is not evidence. **A requirement without evidence makes the verdict NO-GO.**
 
-## Phase D — Decision and rollback
-
-Produce a single output:
+## Step 5: Decide
 
 ```markdown
 ## Ship Decision: GO | NO-GO
 
-### Blockers (must fix before ship)
-- [Source persona: Critical finding + file:line]
+### Blockers (must fix before merge)
+- [Critical finding + file:line, or a requirement without evidence]
 
-### Recommended fixes (should fix before ship)
-- [Source persona: Important finding + file:line]
+### Recommended fixes
+- [Important finding + file:line]
 
 ### Spec coverage
-- [The Phase C2 table, or "no change folder"]
-
-### Acknowledged risks (shipping anyway)
-- [Risk + mitigation]
+- [The Step 4 table, or "no change file"]
 
 ### Rollback plan
-- Trigger conditions: [what signals would prompt rollback]
-- Rollback procedure: [exact steps]
-- Recovery time objective: [target]
-
-### Specialist reports (full)
-- [code-reviewer report]
-- [security-auditor report]
-- [test-engineer report]
+- Trigger: [what signals a rollback]
+- Procedure: [exact steps]
 ```
 
-## Phase E: Archive after GO
+A Critical finding means NO-GO unless the user explicitly accepts the risk. The rollback plan is required for GO.
 
-On GO, and only on GO, when the work has a change folder: run `node <skill dir>/scripts/archive.mjs specs/changes/<name>`, where `<skill dir>` is the base directory of the `spec-driven-development` skill. It applies the deltas to `specs/<area>.md`, validates the result, and moves the folder to `specs/changes/archive/<date>-<name>/`, changing nothing if anything fails. Commit what it changed in the same pull request as the code, so the living spec never describes unmerged work. If it refuses, report its problems: the verdict stays GO for the code, but the PR is not ready until the delta is fixed and archived.
+## Step 6: Archive after GO
 
-## Rules
-
-1. The three Phase A personas run in parallel — never sequentially.
-2. Personas do not call each other. The main agent merges in Phase B.
-3. The rollback plan is mandatory before any GO decision.
-4. If any persona returns a Critical finding, the default verdict is NO-GO unless the user explicitly accepts the risk.
-5. **Skip the fan-out only if all of the following are true:** the change touches 2 files or fewer, the diff is under 50 lines, and it does not touch auth, payments, data access, or config/env. Otherwise, default to fan-out. For solo-pass review on small changes, use `mzyx-skills:check` instead. `/ship` is designed for production-bound changes — when the blast radius is non-trivial, run the parallel review even if the diff looks small.
-6. **No evidence, no GO.** Every Added and Modified requirement in the change needs a row with real evidence in Phase C2.
-7. **Archive only through the script.** Never edit `specs/<area>.md` by hand to fold in a change.
-8. **Verification gate is non-negotiable.** Phase C must run before any GO verdict. A green diff in CI is not sufficient — confirm locally on the actual branch.
+On GO, when there is a change file, run `node <skill dir>/scripts/archive.mjs specs/changes/<name>`, where `<skill dir>` is the base directory of the `spec-driven-development` skill. It folds the deltas into `specs/<area>.md` and moves the folder to `specs/changes/archive/<date>-<name>/`, or changes nothing if anything fails. Commit the result in the same pull request. Never edit `specs/<area>.md` by hand.
