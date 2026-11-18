@@ -7,20 +7,20 @@ The spec pipeline (`/brainstorm`, `/spec`, `/plan`, `/build`, `/ship`) writes a 
 This release keeps the pipeline and its commands, and borrows four ideas from OpenSpec without depending on it:
 
 - **Living specs:** `specs/<area>.md` always describes what the system does now.
-- **Change folders:** a change is a delta (added, modified, removed, renamed requirements) plus its tasks, kept until it ships.
+- **Change files:** a change is one file, `specs/changes/<name>.md` named after the ticket, holding a delta (added, modified, removed, renamed requirements), with its tasks in `<name>.tasks.md` beside it, kept until it ships.
 - **Archive:** after a change ships, its deltas are folded into the living spec by a script, in the same pull request.
 - **Validation:** a script checks every spec and change before a human sees it.
 
-It adds what OpenSpec lacks and mzyx already has: named EARS requirements, TDD per task, evidence before a done claim, and parallel review before shipping, now extended with a check that every changed requirement has evidence.
+It adds what OpenSpec lacks and mzyx already has: named EARS requirements, TDD per task, evidence before a done claim, and an inline review before shipping, now extended with a check that every changed requirement has evidence.
 
 Users: anyone using the mzyx-skills plugin through the `mzyx` marketplace. A Transferz team version for `transferz/dev-tools` is a separate project.
 
 ## Commands
 
 ```bash
-node skills/spec-driven-development/scripts/validate.mjs specs/changes/<name>/change.md
+node skills/spec-driven-development/scripts/validate.mjs specs/changes/<name>.md
 node skills/spec-driven-development/scripts/validate.mjs specs/<area>.md
-node skills/spec-driven-development/scripts/archive.mjs specs/changes/<name>
+node skills/spec-driven-development/scripts/archive.mjs specs/changes/<name>.md
 node --test skills/spec-driven-development/scripts/*.test.mjs
 claude plugin validate .
 ```
@@ -32,9 +32,9 @@ In a repository that uses the pipeline:
 ```
 specs/
   <area>.md                              living spec
-  changes/<name>/change.md                the delta, committed
-  changes/<name>/tasks.md                 the checklist, gitignored
-  changes/archive/<YYYY-MM-DD>-<name>/change.md
+  changes/<name>.md                       the delta, committed
+  changes/<name>.tasks.md                 the checklist, gitignored
+  changes/archive/<YYYY-MM-DD>-<name>.md  finished changes, with their tasks file
 ```
 
 In this repository:
@@ -44,9 +44,9 @@ skills/spec-driven-development/SKILL.md          formats and lifecycle
 skills/spec-driven-development/scripts/validate.mjs
 skills/spec-driven-development/scripts/archive.mjs
 skills/spec-driven-development/scripts/*.test.mjs
-skills/writing-plans/SKILL.md                    tasks.md format
-skills/executing-plans/SKILL.md                  reads and ticks tasks.md
-skills/subagent-driven-development/SKILL.md      reads and ticks tasks.md
+skills/writing-plans/SKILL.md                    the tasks file format
+skills/executing-plans/SKILL.md                  reads and ticks the tasks file
+skills/subagent-driven-development/SKILL.md      reads and ticks the tasks file
 .claude/commands/{spec,plan,build,ship}.md
 .claude-plugin/plugin.json                       0.8.0
 README.md
