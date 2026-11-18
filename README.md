@@ -53,7 +53,7 @@ specs/
   changes/archive/<YYYY-MM-DD>-<name>.md  finished changes, kept as history
 ```
 
-`<name>` is the ticket ID when there is one (`specs/changes/arg-262.md`). Since 0.9.0 a change is one file; a change folder from 0.8 (`specs/changes/<name>/change.md`) still validates and archives.
+`<name>` is the ticket ID exactly as it is when there is one (`specs/changes/ARG-262.md`), the same as the branch name. Since 0.9.0 a change is one file; a change folder from 0.8 (`specs/changes/<name>/change.md`) still validates and archives.
 
 - `/spec` writes the delta with named EARS requirements and runs `validate.mjs` before asking for approval.
 - `/plan` writes `<name>.tasks.md`: checkbox tasks naming the requirements they cover, with an exact Verify command each.

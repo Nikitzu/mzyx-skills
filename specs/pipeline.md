@@ -92,7 +92,7 @@ THE SYSTEM SHALL keep one living spec per area at `specs/<area>.md`, with the si
 THE SYSTEM SHALL write every requirement as a `###` heading holding a short unique name, followed by exactly one EARS line starting with `THE SYSTEM SHALL`, `WHEN`, `WHILE`, `IF` or `WHERE`.
 
 ### Change file
-WHEN `/spec` starts work THE SYSTEM SHALL create `specs/changes/<name>.md`, where `<name>` is the ticket ID in lower case when there is one, with front matter naming its `area`, a `## Why` section, and one or more of `## Added`, `## Modified`, `## Removed` and `## Renamed`.
+WHEN `/spec` starts work THE SYSTEM SHALL create `specs/changes/<name>.md`, where `<name>` is the ticket ID exactly as it is when there is one, with front matter naming its `area`, a `## Why` section, and one or more of `## Added`, `## Modified`, `## Removed` and `## Renamed`.
 
 ### Delta sections
 THE SYSTEM SHALL hold named requirements under Added and Modified, requirement names only under Removed, and `old name → new name` lines under Renamed.

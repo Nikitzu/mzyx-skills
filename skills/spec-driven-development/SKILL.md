@@ -252,7 +252,7 @@ Execute tasks one at a time following the `test-driven-development` skill. Load 
 ```
 specs/
   <area>.md                              living spec: what the area does now
-  changes/<name>.md                       the delta, committed; <name> is the ticket ID when there is one, for example arg-262
+  changes/<name>.md                       the delta, committed; <name> is the ticket ID as it is, for example ARG-262
   changes/<name>.tasks.md                 the checklist, gitignored
   changes/archive/<YYYY-MM-DD>-<name>.md  finished changes, kept as history
 ```
