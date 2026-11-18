@@ -15,7 +15,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Context:** Run it in the repository's normal checkout.
 
-**Save the plan to:** `specs/changes/<name>/tasks.md`, next to the change it implements. Add `specs/changes/*/tasks.md` to `.gitignore` if it is not there. Write no other plan file: no `plan.md`, `todo.md`, `tasks/` or `docs/plans/`. A spec started before 0.8.0 as a root `SPEC.md` has no change folder; put its plan in `tasks/plan.md` and gitignore `tasks/`.
+**Save the plan to:** `specs/changes/<name>.tasks.md`, next to the change it implements. Add `specs/changes/*.tasks.md` to `.gitignore` if it is not there. Write no other plan file: no `plan.md`, `todo.md`, `tasks/` or `docs/plans/`. A spec started before 0.8.0 as a root `SPEC.md` has no change folder; put its plan in `tasks/plan.md` and gitignore `tasks/`.
 
 ## Scope Check
 
@@ -55,7 +55,7 @@ Start `tasks.md` with:
 ```markdown
 # [Change name]: tasks
 
-Change: `specs/changes/<name>/change.md`. [One line on the approach.]
+Change: `specs/changes/<name>.md`. [One line on the approach.]
 
 ## Contracts
 [Only if tasks share an interface: the function signatures, types or file formats every task must agree on.]
@@ -111,7 +111,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `specs/changes/<name>/tasks.md`. Two execution options:**
+**"Plan complete and saved to `specs/changes/<name>.tasks.md`. Two execution options:**
 
 **1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 

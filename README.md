@@ -43,18 +43,20 @@ The pipeline. Each command invokes one or more skills. Commands ship in `.claude
    (sp)         (as+sp)   (sp)     (asks!)    (inline+sp)
 ```
 
-Since 0.8.0 the pipeline works on **change folders and living specs**, an idea borrowed from OpenSpec without depending on it:
+Since 0.8.0 the pipeline works on **change files and living specs**, an idea borrowed from OpenSpec without depending on it:
 
 ```
 specs/
   <area>.md                              living spec: what the area does now
-  changes/<name>/change.md                the delta: Added, Modified, Removed, Renamed requirements
-  changes/<name>/tasks.md                 the checklist /build ticks (gitignored)
-  changes/archive/<YYYY-MM-DD>-<name>/    finished changes, kept as history
+  changes/<name>.md                       the delta: Added, Modified, Removed, Renamed requirements
+  changes/<name>.tasks.md                 the checklist /build ticks (gitignored)
+  changes/archive/<YYYY-MM-DD>-<name>.md  finished changes, kept as history
 ```
 
+`<name>` is the ticket ID when there is one (`specs/changes/arg-262.md`). Since 0.9.0 a change is one file; a change folder from 0.8 (`specs/changes/<name>/change.md`) still validates and archives.
+
 - `/spec` writes the delta with named EARS requirements and runs `validate.mjs` before asking for approval.
-- `/plan` writes `tasks.md`: checkbox tasks naming the requirements they cover, with an exact Verify command each.
+- `/plan` writes `<name>.tasks.md`: checkbox tasks naming the requirements they cover, with an exact Verify command each.
 - `/build` resumes at the first unticked task and ticks each one after it is verified and committed.
 - `/ship` maps every changed requirement to evidence (none means NO-GO), then `archive.mjs` folds the delta into `specs/<area>.md` in the same pull request.
 
@@ -64,7 +66,7 @@ The two scripts are plain Node with no dependencies, in `skills/spec-driven-deve
 | --- | --- | --- |
 | `/brainstorm` | `mzyx-skills:brainstorming` | sp |
 | `/spec` | `mzyx-skills:brainstorming` (if fuzzy) → `mzyx-skills:spec-driven-development` | sp + as |
-| `/plan` | `mzyx-skills:writing-plans` (writes `specs/changes/<name>/tasks.md`) | sp |
+| `/plan` | `mzyx-skills:writing-plans` (writes `specs/changes/<name>.tasks.md`) | sp |
 | `/build` | **Asks which mode first**, unless it was already chosen: parallel teammates / separate session / inline solo. Resumes at the first unticked task. Each mode pairs `mzyx-skills:test-driven-development` + `mzyx-skills:verification-before-completion` per task; the parallel mode layers `mzyx-skills:using-teams` on top. | sp + as |
 | `/ship` | The pre-merge gate, inline with no subagents: one review of the diff (correctness, security, tests, docs) → `mzyx-skills:verification-before-completion` → spec coverage (evidence per changed requirement) → GO / NO-GO + rollback → archive the change | inline + sp |
 

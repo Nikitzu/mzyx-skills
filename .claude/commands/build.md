@@ -2,7 +2,7 @@
 description: Execute tasks from the plan — always asks the user which execution mode to use first.
 ---
 
-**Step 0: find the task file.** It is `specs/changes/<name>/tasks.md` for the open change (for a spec started before 0.8.0, `tasks/plan.md`). If every box is ticked, say so and point to `/ship`; do not start work. Otherwise begin at the first unticked task.
+**Step 0: find the task file.** It is `specs/changes/<name>.tasks.md` for the open change (for a spec started before 0.8.0, `tasks/plan.md`). If every box is ticked, say so and point to `/ship`; do not start work. Otherwise begin at the first unticked task.
 
 **Step 1: choose the execution mode.** If the user already chose one in this conversation, use it and say which. Otherwise ask, without picking a default. Use `AskUserQuestion` with these three options:
 

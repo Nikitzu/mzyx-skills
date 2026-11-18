@@ -16,9 +16,9 @@ Then generate a structured spec covering all six core areas: objective, commands
 
 **Where it goes:**
 - Find the area this work belongs to. If `specs/<area>.md` exists, write a change against it; if not, the change starts a new area and carries the six core sections.
-- Write the change to `specs/changes/<name>/change.md`: front matter `area`, then `## Why`, then only the delta sections it needs (`## Added`, `## Modified`, `## Removed`, `## Renamed`). Every requirement is a `###` name followed by one EARS line.
+- Write the change to `specs/changes/<name>.md`, where `<name>` is the ticket ID in lower case when there is one (`specs/changes/arg-262.md`), otherwise a short kebab-case name: front matter `area`, then `## Why`, then only the delta sections it needs (`## Added`, `## Modified`, `## Removed`, `## Renamed`). Every requirement is a `###` name followed by one EARS line.
 - Record each clarification in its `## Clarifications` section.
-- Before asking for approval, run `node <skill dir>/scripts/validate.mjs specs/changes/<name>/change.md` and fix everything it reports. Do not ask while it reports a problem.
-- On approval, commit `change.md` where it is. Do not move or rename it.
+- Before asking for approval, run `node <skill dir>/scripts/validate.mjs specs/changes/<name>.md` and fix everything it reports. Do not ask while it reports a problem.
+- On approval, commit the change file where it is. Do not move or rename it.
 
 Next step in the flow: `/plan`.

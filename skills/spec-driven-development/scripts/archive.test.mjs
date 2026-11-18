@@ -90,3 +90,34 @@ test('on any problem the CLI changes nothing and exits 1', () => {
   assert.ok(existsSync(join(root, 'specs', 'changes', 'tweak', 'change.md')));
   assert.ok(!existsSync(join(root, 'specs', 'changes', 'archive')));
 });
+
+test('the CLI archives a single-file change and its tasks file', () => {
+  const root = repo();
+  writeFileSync(join(root, 'specs', 'changes', 'arg-262.md'), change('## Added\n\n### New\nTHE SYSTEM SHALL work.\n'));
+  writeFileSync(join(root, 'specs', 'changes', 'arg-262.tasks.md'), '- [x] **1. New**\n');
+  execFileSync('node', [CLI, join(root, 'specs', 'changes', 'arg-262.md'), '--date', '2026-11-18']);
+  assert.match(readFileSync(join(root, 'specs', 'memory.md'), 'utf8'), /### New\nTHE SYSTEM SHALL work\./);
+  assert.ok(existsSync(join(root, 'specs', 'changes', 'archive', '2026-11-18-arg-262.md')));
+  assert.ok(existsSync(join(root, 'specs', 'changes', 'archive', '2026-11-18-arg-262.tasks.md')));
+  assert.ok(!existsSync(join(root, 'specs', 'changes', 'arg-262.md')));
+  assert.ok(!existsSync(join(root, 'specs', 'changes', 'arg-262.tasks.md')));
+});
+
+test('a single-file change with a problem is left where it was', () => {
+  const root = repo();
+  writeFileSync(join(root, 'specs', 'changes', 'arg-262.md'), change('## Removed\n\n- Ghost\n'));
+  const run = spawnSync('node', [CLI, join(root, 'specs', 'changes', 'arg-262.md'), '--date', '2026-11-18'], { encoding: 'utf8' });
+  assert.equal(run.status, 1);
+  assert.ok(existsSync(join(root, 'specs', 'changes', 'arg-262.md')));
+  assert.equal(readFileSync(join(root, 'specs', 'memory.md'), 'utf8'), LIVING);
+});
+
+
+test('a renamed requirement can be modified under its new name', () => {
+  const root = repo();
+  writeFileSync(join(root, 'specs', 'changes', 'cap.md'), change('## Renamed\n\n- Size cap → Input cap\n\n## Modified\n\n### Input cap\nTHE SYSTEM SHALL cap input at 300 KB.\n'));
+  execFileSync('node', [CLI, join(root, 'specs', 'changes', 'cap.md'), '--date', '2026-11-18']);
+  const spec = readFileSync(join(root, 'specs', 'memory.md'), 'utf8');
+  assert.match(spec, /### Input cap\nTHE SYSTEM SHALL cap input at 300 KB\./);
+  assert.doesNotMatch(spec, /### Size cap/);
+});

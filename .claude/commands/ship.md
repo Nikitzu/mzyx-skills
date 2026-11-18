@@ -6,7 +6,7 @@ description: The pre-merge gate - one inline review of the change, evidence for 
 
 ## Step 1: Read the change
 
-Read the real diff against the base branch (`git diff <base>...HEAD`), not a summary of it, and the change file if there is one (`specs/changes/<name>/change.md`).
+Read the real diff against the base branch (`git diff <base>...HEAD`), not a summary of it, and the change file if there is one (`specs/changes/<name>.md`).
 
 ## Step 2: Review it inline
 
@@ -55,4 +55,4 @@ A Critical finding means NO-GO unless the user explicitly accepts the risk. The 
 
 ## Step 6: Archive after GO
 
-On GO, when there is a change file, run `node <skill dir>/scripts/archive.mjs specs/changes/<name>`, where `<skill dir>` is the base directory of the `spec-driven-development` skill. It folds the deltas into `specs/<area>.md` and moves the folder to `specs/changes/archive/<date>-<name>/`, or changes nothing if anything fails. Commit the result in the same pull request. Never edit `specs/<area>.md` by hand.
+On GO, when there is a change file, run `node <skill dir>/scripts/archive.mjs specs/changes/<name>.md`, where `<skill dir>` is the base directory of the `spec-driven-development` skill. It folds the deltas into `specs/<area>.md` and moves the change and its tasks file to `specs/changes/archive/<date>-<name>.md` and `<date>-<name>.tasks.md`, or changes nothing if anything fails. Commit the result in the same pull request. Never edit `specs/<area>.md` by hand.

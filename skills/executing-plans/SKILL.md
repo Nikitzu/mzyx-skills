@@ -15,7 +15,7 @@ Load plan, review critically, execute all tasks, report when complete.
 
 ## The Task File
 
-The plan is `specs/changes/<name>/tasks.md` (for a spec started before 0.8.0, `tasks/plan.md`). Its checkboxes are the progress record:
+The plan is `specs/changes/<name>.tasks.md` (for a spec started before 0.8.0, `tasks/plan.md`). Its checkboxes are the progress record:
 
 - **Resume:** start at the first unticked task. Ticked tasks are done; do not redo them.
 - **Tick on verified:** tick a task (`- [ ]` to `- [x]`) only after its Verify command passed and its commit landed. Never tick ahead.

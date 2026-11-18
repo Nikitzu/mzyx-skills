@@ -53,8 +53,11 @@ function updatedSpec(livingMarkdown, change) {
   const renamed = new Map(change.renamed.map((r) => [r.from, r.to]));
   const requirements = parseSpec(livingMarkdown)
     .requirements.filter((r) => !removed.has(r.name))
-    .map((r) => modified.get(r.name) ?? r)
-    .map((r) => (renamed.has(r.name) ? { ...r, name: renamed.get(r.name) } : r));
+    .map((r) => {
+      const name = renamed.get(r.name) ?? r.name;
+      const changed = modified.get(name) ?? modified.get(r.name);
+      return changed ? { ...changed, name } : { ...r, name };
+    });
   requirements.push(...change.added);
 
   return [
@@ -81,17 +84,20 @@ function fail(problems, file) {
 }
 
 function main(argv) {
-  const folder = argv[0];
+  const target = argv[0];
   const dateFlag = argv.indexOf('--date');
   const date = dateFlag >= 0 ? argv[dateFlag + 1] : new Date().toISOString().slice(0, 10);
-  if (!folder) {
-    console.error('usage: archive.mjs <specs/changes/name> [--date YYYY-MM-DD]');
+  if (!target) {
+    console.error('usage: archive.mjs <specs/changes/name.md> [--date YYYY-MM-DD]');
     process.exit(2);
   }
-  const changeFile = join(folder, 'change.md');
+  const single = target.endsWith('.md');
+  const changeFile = single ? target : join(target, 'change.md');
+  const name = single ? basename(target, '.md') : basename(resolve(target));
+  const changesDir = dirname(resolve(target));
   const changeMarkdown = readFileSync(changeFile, 'utf8');
   const change = parseChange(changeMarkdown);
-  const specsDir = resolve(folder, '..', '..');
+  const specsDir = resolve(changesDir, '..');
   const livingFile = join(specsDir, `${change.area}.md`);
   const livingBefore = existsSync(livingFile) ? readFileSync(livingFile, 'utf8') : null;
 
@@ -102,11 +108,18 @@ function main(argv) {
   if (supersededFile && !existsSync(supersededFile)) {
     fail([{ line: 1, message: `supersedes ${change.supersedes}, which does not exist` }], changeFile);
   }
-  const archived = join(specsDir, 'changes', 'archive', `${date}-${basename(resolve(folder))}`);
-  if (existsSync(archived)) fail([{ line: 1, message: `${archived} already exists` }], changeFile);
+  const archiveDir = join(changesDir, 'archive');
+  const tasksFile = join(changesDir, `${name}.tasks.md`);
+  const moves = single
+    ? [[resolve(target), join(archiveDir, `${date}-${name}.md`)]]
+    : [[resolve(target), join(archiveDir, `${date}-${name}`)]];
+  if (single && existsSync(tasksFile)) moves.push([tasksFile, join(archiveDir, `${date}-${name}.tasks.md`)]);
+  for (const [, to] of moves) {
+    if (existsSync(to)) fail([{ line: 1, message: `${to} already exists` }], changeFile);
+  }
 
-  mkdirSync(dirname(archived), { recursive: true });
-  renameSync(folder, archived);
+  mkdirSync(archiveDir, { recursive: true });
+  for (const [from, to] of moves) renameSync(from, to);
   try {
     writeFileSync(livingFile, result.living);
     if (supersededFile) {
@@ -120,10 +133,10 @@ function main(argv) {
     } else {
       writeFileSync(livingFile, livingBefore);
     }
-    renameSync(archived, folder);
+    for (const [from, to] of moves) renameSync(to, from);
     throw error;
   }
-  console.log(`archived ${basename(resolve(folder))} into specs/${change.area}.md and ${archived}`);
+  console.log(`archived ${name} into specs/${change.area}.md and ${moves[0][1]}`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

@@ -48,7 +48,7 @@ test('duplicate requirement names are reported', () => {
   assert.ok(validateSpec(md).some((p) => p.message === 'duplicate requirement name: A'));
 });
 
-import { parseChange, validateChange } from './validate.mjs';
+import { livingPathFor, parseChange, validateChange } from './validate.mjs';
 
 const LIVING = living(
   '### Size cap\nIF the text is large, THEN THE SYSTEM SHALL defer.\n\n### Old name\nTHE SYSTEM SHALL keep a lock.\n',
@@ -108,4 +108,15 @@ test('a change for a new area carries the core sections and only Added', () => {
   const messages = validateChange(bad, null).map((p) => p.message);
   assert.ok(messages.includes('new area "fresh" has no living spec, so it may only use Added'));
   assert.ok(messages.includes('new area "fresh" needs section: Objective'));
+});
+
+test('a single-file change and a change folder find the same living spec', () => {
+  assert.equal(livingPathFor('/r/specs/changes/arg-262.md', 'memory'), '/r/specs/memory.md');
+  assert.equal(livingPathFor('/r/specs/changes/tweak/change.md', 'memory'), '/r/specs/memory.md');
+});
+
+
+test('a change may modify a requirement under the name it renames it to', () => {
+  const md = change('## Renamed\n\n- Size cap → Input cap\n\n## Modified\n\n### Input cap\nIF the input exceeds 300 KB, THEN THE SYSTEM SHALL defer the rest.\n');
+  assert.deepEqual(validateChange(md, LIVING), []);
 });

@@ -143,7 +143,7 @@ WHILE a reset link is expired THE SYSTEM SHALL reject it and prompt to request a
 [How we'll know this is done: specific, testable conditions]
 ```
 
-**Change template** (`specs/changes/<name>/change.md`, what one piece of work changes):
+**Change template** (`specs/changes/<name>.md`, what one piece of work changes):
 
 ```markdown
 ---
@@ -233,7 +233,7 @@ Break the plan into discrete, implementable tasks:
 - Tasks are ordered by dependency, not by perceived importance
 - No task should require changing more than ~5 files
 
-Tasks go to `specs/changes/<name>/tasks.md`; the `writing-plans` skill owns the format. Each task names the requirements it implements:
+Tasks go to `specs/changes/<name>.tasks.md`; the `writing-plans` skill owns the format. Each task names the requirements it implements:
 
 ```markdown
 - [ ] **3. Reset link expiry**
@@ -252,24 +252,24 @@ Execute tasks one at a time following the `test-driven-development` skill. Load 
 ```
 specs/
   <area>.md                              living spec: what the area does now
-  changes/<name>/change.md                the delta, committed
-  changes/<name>/tasks.md                 the checklist, gitignored
-  changes/archive/<YYYY-MM-DD>-<name>/    finished changes, kept as history
+  changes/<name>.md                       the delta, committed; <name> is the ticket ID when there is one, for example arg-262
+  changes/<name>.tasks.md                 the checklist, gitignored
+  changes/archive/<YYYY-MM-DD>-<name>.md  finished changes, kept as history
 ```
 
-1. **Write the change.** `/spec` creates `specs/changes/<name>/change.md` as a delta against `specs/<area>.md`: requirements that are added, modified, removed or renamed, by name.
+1. **Write the change.** `/spec` creates `specs/changes/<name>.md` as a delta against `specs/<area>.md`: requirements that are added, modified, removed or renamed, by name.
 2. **Validate before asking for approval.** Run the validator and fix every problem it reports. Do not ask for approval while it reports any:
 
    ```bash
-   node <skill dir>/scripts/validate.mjs specs/changes/<name>/change.md
+   node <skill dir>/scripts/validate.mjs specs/changes/<name>.md
    ```
 
    It finds `specs/<area>.md` by itself and checks that Modified, Removed and Renamed names exist there and Added names do not. Run it on a living spec the same way.
-3. **Commit on approval.** Commit `change.md` where it is. It is not moved or renamed.
+3. **Commit on approval.** Commit the change file where it is. It is not moved or renamed.
 4. **Plan and build.** `/plan` writes `tasks.md` next to it, and `/build` ticks it.
-5. **Archive at ship.** After GO, `/ship` runs `archive.mjs`, which applies the deltas to `specs/<area>.md`, validates the result, and moves the folder to `specs/changes/archive/<date>-<name>/`. It changes nothing when anything fails. Never edit a living spec by hand where the archive should.
+5. **Archive at ship.** After GO, `/ship` runs `archive.mjs`, which applies the deltas to `specs/<area>.md`, validates the result, and moves the change and its tasks file to `specs/changes/archive/<date>-<name>.md` and `<date>-<name>.tasks.md`. It changes nothing when anything fails. Never edit a living spec by hand where the archive should.
 
-`<skill dir>` is the base directory shown when this skill loads (for archive: `<skill dir>/scripts/archive.mjs specs/changes/<name>`).
+`<skill dir>` is the base directory shown when this skill loads (for archive: `<skill dir>/scripts/archive.mjs specs/changes/<name>.md`).
 
 A spec started before 0.8.0 as a root `SPEC.md` finishes the old way: finalized into `specs/<slug>.md`. The first change in its area names it in `supersedes`, and archiving marks it superseded.
 
@@ -278,7 +278,7 @@ A spec started before 0.8.0 as a root `SPEC.md` finishes the old way: finalized 
 - **A decision changed mid-work:** edit the open change's delta, never the living spec, and validate again.
 - **A shipped behaviour changes:** write a new change against the living spec.
 - **Two open changes in one area:** the second to archive is refused if the first removed or renamed something it touches. Update its delta and validate again.
-- **Reference the change in PRs:** link `specs/changes/<name>/change.md`.
+- **Reference the change in PRs:** link `specs/changes/<name>.md`.
 
 ## Common Rationalizations
 
@@ -309,5 +309,5 @@ Before proceeding to implementation, confirm:
 - [ ] The human has reviewed and approved the spec
 - [ ] Success criteria are specific and testable
 - [ ] Boundaries (Always/Ask First/Never) are defined
-- [ ] The change lives at `specs/changes/<name>/change.md` and is committed
-- [ ] `specs/changes/*/tasks.md` is gitignored
+- [ ] The change lives at `specs/changes/<name>.md` and is committed
+- [ ] `specs/changes/*.tasks.md` is gitignored

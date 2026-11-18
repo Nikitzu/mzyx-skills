@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const CORE_SECTIONS = [
@@ -151,8 +151,9 @@ export function validateChange(changeMarkdown, livingMarkdown) {
       problems.push({ line: requirement.line, message: `Added "${requirement.name}" already exists in the living spec` });
     }
   }
+  const renamedTo = new Set(change.renamed.map((r) => r.to));
   for (const requirement of change.modified) {
-    if (!existing.has(requirement.name)) {
+    if (!existing.has(requirement.name) && !renamedTo.has(requirement.name)) {
       problems.push({ line: requirement.line, message: `Modified "${requirement.name}" is not in the living spec` });
     }
   }
@@ -170,7 +171,8 @@ export function validateChange(changeMarkdown, livingMarkdown) {
 }
 
 export function livingPathFor(changeFile, area) {
-  return join(resolve(dirname(changeFile), '..', '..'), `${area}.md`);
+  const changes = basename(changeFile) === 'change.md' ? dirname(dirname(changeFile)) : dirname(changeFile);
+  return join(resolve(changes, '..'), `${area}.md`);
 }
 
 function print(file, problems) {
@@ -181,7 +183,7 @@ function print(file, problems) {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const file = process.argv[2];
   if (!file) {
-    console.error('usage: validate.mjs <specs/area.md | specs/changes/name/change.md>');
+    console.error('usage: validate.mjs <specs/area.md | specs/changes/name.md>');
     process.exit(2);
   }
   const text = readFileSync(file, 'utf8');

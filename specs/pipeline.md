@@ -91,8 +91,8 @@ THE SYSTEM SHALL keep one living spec per area at `specs/<area>.md`, with the si
 ### Named requirement
 THE SYSTEM SHALL write every requirement as a `###` heading holding a short unique name, followed by exactly one EARS line starting with `THE SYSTEM SHALL`, `WHEN`, `WHILE`, `IF` or `WHERE`.
 
-### Change folder
-WHEN `/spec` starts work THE SYSTEM SHALL create `specs/changes/<name>/change.md` with front matter naming its `area`, a `## Why` section, and one or more of `## Added`, `## Modified`, `## Removed` and `## Renamed`.
+### Change file
+WHEN `/spec` starts work THE SYSTEM SHALL create `specs/changes/<name>.md`, where `<name>` is the ticket ID in lower case when there is one, with front matter naming its `area`, a `## Why` section, and one or more of `## Added`, `## Modified`, `## Removed` and `## Renamed`.
 
 ### Delta sections
 THE SYSTEM SHALL hold named requirements under Added and Modified, requirement names only under Removed, and `old name → new name` lines under Renamed.
@@ -107,10 +107,10 @@ WHEN `/spec` resolves an open question THE SYSTEM SHALL record the answer in a `
 WHEN `/spec` is about to ask for approval THE SYSTEM SHALL run `validate.mjs` on the change and SHALL NOT ask until it reports no problems.
 
 ### Commit the change
-WHEN the user approves a change THE SYSTEM SHALL commit `change.md` and SHALL NOT move or rename it.
+WHEN the user approves a change THE SYSTEM SHALL commit the change file and SHALL NOT move or rename it.
 
 ### Tasks file
-WHEN `/plan` runs THE SYSTEM SHALL write the change's checklist to `specs/changes/<name>/tasks.md` and add `specs/changes/*/tasks.md` to `.gitignore`.
+WHEN `/plan` runs THE SYSTEM SHALL write the change's checklist to `specs/changes/<name>.tasks.md` and add `specs/changes/*.tasks.md` to `.gitignore`.
 
 ### Task shape
 THE SYSTEM SHALL write each task as a checkbox with `Covers` (the requirement names it implements), `Acceptance`, `Verify` (an exact command) and `Files`, and SHALL include code only for a contract, an interface or a function whose shape is the point.
@@ -153,3 +153,9 @@ WHEN the first change archives into an area and its front matter names an older 
 
 ### Release
 WHEN the work merges THE SYSTEM SHALL ship as version 0.8.0 in `.claude-plugin/plugin.json`, on `main` of `Nikitzu/mzyx-skills`, tagged `v0.8.0`.
+
+### Archive moves both files
+WHEN `archive.mjs` archives `specs/changes/<name>.md` THE SYSTEM SHALL move it and `specs/changes/<name>.tasks.md`, if present, to `specs/changes/archive/<date>-<name>.md` and `<date>-<name>.tasks.md`.
+
+### Change folders still work
+IF a change is a 0.8 folder `specs/changes/<name>/change.md`, THEN THE SYSTEM SHALL validate it against the same living spec and archive it as a folder.

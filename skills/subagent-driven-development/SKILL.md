@@ -123,7 +123,7 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 
 ## The Task File
 
-The plan is `specs/changes/<name>/tasks.md` (for a spec started before 0.8.0, `tasks/plan.md`). Its checkboxes are the progress record:
+The plan is `specs/changes/<name>.tasks.md` (for a spec started before 0.8.0, `tasks/plan.md`). Its checkboxes are the progress record:
 
 - **Resume:** start at the first unticked task. Ticked tasks are done; do not redo them.
 - **Tick on verified:** tick a task (`- [ ]` to `- [x]`) only after its Verify command passed and its commit landed. Never tick ahead.
@@ -136,7 +136,7 @@ The controller (this session) ticks the box after the reviewers approve and the 
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
-[Read the task file once: specs/changes/hook-install/tasks.md, first unticked task is 1]
+[Read the task file once: specs/changes/hook-install.tasks.md, first unticked task is 1]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]
 

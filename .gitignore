@@ -11,4 +11,5 @@
 
 # Local plans (pre-0.8.0 habit)
 tasks/
+specs/changes/*.tasks.md
 specs/changes/*/tasks.md
